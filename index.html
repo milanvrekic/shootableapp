@@ -50,7 +50,7 @@ p{margin:0}
 .nav .links{display:flex;gap:24px;flex-wrap:wrap;margin-left:auto}
 .nav .links a{color:#fff;text-decoration:none;font-weight:500;font-size:16px}
 .nav .links a:hover{color:var(--brand)}
-.hero-body{flex:1;display:flex;align-items:center;padding:24px 0 64px}
+.hero-body{flex:1;padding-top:24px;padding-bottom:64px}
 .hero-copy{max-width:560px;display:flex;flex-direction:column;gap:26px}
 .hero h1{font-size:clamp(54px,7vw,92px);line-height:.88}
 .hero .lede{font-size:20px;line-height:1.5;color:var(--soft);max-width:520px}
@@ -58,26 +58,19 @@ p{margin:0}
 .hero .lede+.lede{margin-top:-12px}
 .hero .fine{font-size:15px;color:var(--dim)}
 .ctas{display:flex;gap:14px;flex-wrap:wrap}
-.xhair{position:absolute;z-index:1;left:72%;top:42%;width:120px;height:120px;transform:translate(-50%,-50%);color:rgba(255,255,255,.75);pointer-events:none}
-.pin{position:absolute;right:max(32px,calc((100vw - 1200px)/2 + 32px));bottom:72px;z-index:2;width:360px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
-.verdict{width:100%;border-radius:18px;padding:14px 16px;display:grid;grid-template-columns:46px minmax(0,1fr);gap:12px;align-items:center;color:#fff;box-shadow:0 18px 40px rgba(0,0,0,.45);transition:background-color .25s}
-.verdict .badge{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
-.verdict .word{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:.92;text-transform:uppercase}
-.verdict .why{font-size:15px;font-weight:500;margin-top:4px;line-height:1.35}
-.verdict .where{font-size:13px;opacity:.95;margin-top:6px;font-variant-numeric:tabular-nums;display:flex;align-items:flex-start;gap:6px}
-.verdict .xh{flex:none;width:16px;height:16px;margin-top:1px}
-.verdict.swap{animation:vswap .28s ease-out}
-@keyframes vswap{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.spots{display:flex;flex-wrap:wrap;gap:8px;width:100%}
-.spots button{font:inherit;font-size:14px;font-weight:600;color:#fff;background:rgba(20,18,15,.72);border:1.5px solid rgba(255,255,255,.35);border-radius:999px;min-height:40px;padding:0 14px;cursor:pointer}
-.spots button[aria-pressed=true]{background:#fff;color:var(--ink);border-color:#fff}
-.pin .cap{font-size:12.5px;line-height:1.4;color:var(--soft)}
+.hero-body{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:56px;align-items:center}
+.hero-real{display:flex;flex-direction:column;align-items:center;gap:16px;width:316px;margin-right:max(0px,calc((100vw - 1200px)/2 - 40px))}
+.hero-real .phone{max-width:316px;transform:rotate(1.5deg);box-shadow:0 40px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08)}
+.hero-real .cap{font-size:13px;line-height:1.45;color:var(--soft);text-align:center;max-width:320px}
+.hero-real .cap b{color:#fff;font-weight:600}
+.hero-real .cap small{display:block;margin-top:6px;font-size:11.5px;color:var(--dim)}
+.screen .map img{width:100%;height:100%;display:block;object-fit:cover}
+.screen .ans.s-clear b{font-size:27px}
 
 /* the three answers: each has its own colour AND pattern, so they read in glare and with colour blindness */
 .s-no{background-color:var(--no);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.13) 0 10px,transparent 10px 20px)}
 .s-clear{background-color:var(--clear)}
 .s-unsure{background-color:#F2B12E;color:var(--ink)!important;background-image:radial-gradient(rgba(0,0,0,.16) 1.5px,transparent 1.6px);background-size:10px 10px}
-.verdict.s-unsure .badge{background:rgba(0,0,0,.1)}
 
 .band{background:var(--bark);color:var(--soft)}
 .band ul{list-style:none;margin:0;padding:22px 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 40px}
@@ -229,9 +222,9 @@ footer{background:var(--bark);color:var(--soft)}
 .small a{color:var(--dim)}
 
 @media (max-width:1000px){
-.pin{position:static;width:auto;max-width:380px;margin:0 32px 40px}
-.xhair{display:none}
-.hero-body{padding-bottom:28px}
+.hero-body{grid-template-columns:minmax(0,1fr);gap:44px;padding-bottom:48px}
+.hero-real{margin:0 auto;width:min(320px,100%)}
+.hero-real .phone{transform:none}
 }
 @media (max-width:900px){
 .split,.priv{grid-template-columns:minmax(0,1fr);gap:40px}
@@ -246,7 +239,6 @@ footer{background:var(--bark);color:var(--soft)}
 .nav{gap:12px}
 .nav .links{gap:16px;margin-left:0;width:100%}
 .hero::before{background:linear-gradient(0deg,rgba(20,18,15,.95) 0%,rgba(20,18,15,.75) 60%,rgba(20,18,15,.45) 100%)}
-.pin{margin:0 16px 36px}
 .hero .lede{font-size:19px}
 .btn{width:100%}
 .phone{max-width:280px}
@@ -276,7 +268,6 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 .ea .err{margin:0;padding:10px 12px;border-radius:10px;background:#FBE4E1;font-weight:600;font-size:15px}
 .ea .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .ea .done p{font-size:17px}
-@media (prefers-reduced-motion:reduce){.verdict.swap{animation:none}.verdict{transition:none}}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -289,7 +280,6 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 
 <header class="hero" id="top">
 <img class="topo" src="img/contours.svg" alt="" aria-hidden="true">
-<svg class="xhair" aria-hidden="true"><use href="#xh"/></svg>
 <div class="wrap">
 <nav class="nav" aria-label="Main">
 <a class="mark" href="#top">Shootable</a>
@@ -308,12 +298,28 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </div>
 <p class="fine">Coming to Google Play first, then the App Store. The answer is free for every spot in BC.</p>
 </div>
+<!-- Hero phone: a real answer. The engine (app/engine.js, rifle) was run on the published BC pack 2026.11.04-v0 plus the fire feed at
+     -120.9028, 50.0525 (a forest road south of Merritt): No prohibition found, with the three conditions shown. The map is drawn
+     by scripts/web/render_hero_map.py from BC open data. When the pack changes, re-run the engine at this spot, update the
+     answer, the date chip and the sources line, and re-render the map. If the answer is no longer clear, pick another spot. -->
+<div class="hero-real">
+<div class="phone" role="img" aria-label="Shootable's answer screen for a rifle at a spot on a forest road south of Merritt: No prohibition found, with the three conditions that apply there.">
+<div class="screen" aria-hidden="true">
+<div class="map"><img src="img/map-merritt.svg" alt="" width="390" height="780"></div>
+<div class="bar"><span class="chip">Rifle</span><span class="chip">Data as of Nov 4</span></div>
+<svg class="xc"><use href="#xh"/></svg>
+<div class="sheet">
+<div class="grab"></div>
+<div class="ans s-clear"><b>No prohibition found</b><span>No rule we check bans a rifle here today.</span></div>
+<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6560" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/></svg><span>Stay more than 100 m from any dwelling, school, church, or occupied farm building.</span></div>
+<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6560" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/></svg><span>Not from or on a highway's road allowance.</span></div>
+<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6560" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/></svg><span>Thompson-Nicola noise bylaw: no persistent gunfire that disturbs people nearby.</span></div>
+<div class="src">Sources · Closed Areas Regulation, current to Oct 27, 2026 · TNRD Bylaw 2480 · Report an error</div>
 </div>
-<div class="pin" aria-label="Example answers">
-<div class="verdict s-clear" id="heroCard" aria-live="polite"><div class="badge" id="heroBadge"></div>
-<div><div class="word" id="heroWord"></div><div class="why" id="heroWhy"></div><div class="where"><svg class="xh" aria-hidden="true"><use href="#xh"/></svg><span id="heroWhere"></span></div></div></div>
-<div class="spots" role="group" aria-label="Try an example spot"><button type="button" data-spot="merritt" aria-pressed="true">Near Merritt · rifle</button><button type="button" data-spot="van" aria-pressed="false">Vancouver · rifle</button><button type="button" data-spot="kam" aria-pressed="false">Kamloops · bow</button><button type="button" data-spot="rev" aria-pressed="false">Revelstoke · air gun</button></div>
-<p class="cap">Tap a spot. These are example answers from Shootable's BC data. Your answer depends on your exact spot and firearm, and a No prohibition found always lists the safety rules that apply everywhere.</p>
+</div>
+</div>
+<p class="cap"><b>A real answer from the app's engine.</b> A forest-road spot south of Merritt, checked against the BC rules published Nov 4, 2026. Your answer depends on your exact spot and firearm.<small>Map: BC Data Catalogue (TRIM contours, Digital Road Atlas, Freshwater Atlas). Contains information licensed under the Open Government Licence – British Columbia.</small></p>
+</div>
 </div>
 </header>
 
@@ -609,32 +615,6 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </div>
 </dialog>
 
-<script>
-// Hero: real answers from the BC pack built 2026-11-03 (engine.evaluate at each spot). Keep them in step with the data:
-// Vancouver By-law 2280 and Kamloops 24-49 are verified whole-city bans; Revelstoke 1499 leaves low-power air guns
-// unsettled; Crown land near Merritt (-120.95, 50.02) answers No prohibition found once the Thompson-Nicola RD row is
-// verified (TNRD has no discharge bylaw; 2389 is its landfill bylaw): until then it's Not confirmed for bylaw coverage.
-(() => {
-  const $ = (id) => document.getElementById(id);
-  const ICON = { no: '<path d="M6 6l12 12M18 6 6 18"/>', unsure: '<path d="M12 7v6M12 17h.01"/>', clear: '<path d="M5 12.5 10 17.5 19 7"/>' };
-  const SPOTS = {
-    van: { k: 'no', word: 'Prohibited', why: 'Vancouver bans discharging firearms and air guns within its boundaries.', where: 'Vancouver · By-law 2280' },
-    kam: { k: 'no', word: 'Prohibited', why: 'Kamloops bans discharging firearms, air guns and bows within its boundaries.', where: 'Kamloops · Bylaw 24-49' },
-    rev: { k: 'unsure', word: 'Not confirmed', why: "Revelstoke's bylaw doesn't clearly say whether it covers low-power air guns.", where: 'Revelstoke · Bylaw 1499' },
-    merritt: { k: 'clear', word: 'No prohibition found', why: 'No closed area, park, reserve, fire order or bylaw bans a rifle here. Stay 100 m from any dwelling and know what is beyond your target.', where: 'Crown land near Merritt · conditions apply' },
-  };
-  let spot = 'merritt';
-  function render(animate) {
-    const a = SPOTS[spot], card = $('heroCard');
-    card.className = 'verdict s-' + a.k + (animate ? ' swap' : '');
-    $('heroBadge').innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[a.k] + '</svg>';
-    $('heroWord').textContent = a.word; $('heroWhy').textContent = a.why; $('heroWhere').textContent = a.where;
-    document.querySelectorAll('[data-spot]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.spot === spot)));
-  }
-  document.querySelectorAll('[data-spot]').forEach((b) => b.addEventListener('click', () => { spot = b.dataset.spot; render(true); }));
-  render(false);
-})();
-</script>
 <script>
 // Early access: a Netlify form (no backend of our own yet). Posted with fetch so the page stays put.
 (() => {
