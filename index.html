@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Shootable: find room to shoot, know it's allowed and safe</title>
-<meta name="description" content="Ranges are few and short on distance. Shootable tells you whether a spot on BC Crown land is open to shooting for your firearm, with the rule behind it, and what's in your line of fire.">
-<meta property="og:title" content="Shootable: find room to shoot, know it's allowed and safe">
-<meta property="og:description" content="Closed areas, town bylaws, parks and reserves, checked for the spot and firearm you pick. Every answer shows its source.">
+<title>Shootable: check any spot in BC before you shoot</title>
+<meta name="description" content="Tap a spot on BC Crown land and pick your firearm. Shootable tells you whether a rule we check bans shooting there today, names the rule, and shades the map around you.">
+<meta property="og:title" content="Shootable: check any spot in BC before you shoot">
+<meta property="og:description" content="Closed areas, town bylaws, parks, reserves and fire orders, checked for the spot and firearm you pick. Every answer shows its source.">
 <meta property="og:url" content="https://getshootable.app/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#1B1915">
@@ -18,10 +18,11 @@
 @font-face{font-family:'IBM Plex Sans';font-weight:500;font-display:swap;src:url(fonts/ibm-plex-sans-latin-500-normal.woff2) format('woff2')}
 @font-face{font-family:'IBM Plex Sans';font-weight:600;font-display:swap;src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format('woff2')}
 /* The 10ten app-page system (Huntable, Fishable): bark and field neutrals, Barlow Condensed caps over IBM Plex Sans,
-   one brand colour per app. Shootable's crimson stays on the mark and icon; buttons use the app's sage so nothing on
-   the page that isn't a Prohibited answer is red. Answer colours match the app: red / green / amber, each with a pattern. */
-:root{--bark:#1B1915;--bark2:#2A2722;--field:#F5F6F3;--ink:#14120F;--muted:#4D514C;--soft:#E6E3DC;--dim:#B8B3A9;
---crimson:#8E1B2E;--brand:#8FCBAE;--brand-hover:#A9D9C1;--brand-ink:#2F5D4A;--no:#B3261E;--clear:#2E6B3F;--unsure:#8A6D00}
+   one brand colour per app. Shootable's crimson stays on the mark and icon; buttons use the app's sage. On this page red
+   means Prohibited and amber means Not confirmed, as in the app, and nothing else uses them: hazards in the diagrams are
+   drawn in sand and white. */
+:root{--bark:#1B1915;--bark2:#2A2722;--field:#F5F6F3;--field2:#ECEEE8;--ink:#14120F;--muted:#4D514C;--soft:#E6E3DC;--dim:#B8B3A9;
+--crimson:#8E1B2E;--brand:#8FCBAE;--brand-hover:#A9D9C1;--brand-ink:#2F5D4A;--no:#B3261E;--clear:#2E6B3F;--unsure:#8A6D00;--sand:#E6E3DC}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -29,59 +30,76 @@ body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);
 a{color:var(--ink)}a:hover{color:var(--brand-ink)}
 :focus-visible{outline:3px solid var(--brand);outline-offset:3px}
 h1,h2,h3{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.005em;margin:0;text-wrap:balance}
-p{margin:0}
+p{margin:0;text-wrap:pretty}
+/* one content edge for every section: the wrap's side padding is never reset by a section's own padding */
 .wrap{max-width:1200px;margin:0 auto;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 24px;border-radius:14px;font-weight:600;font-size:17px;text-decoration:none;font-family:inherit;cursor:pointer}
-.btn.primary{background:var(--brand);color:var(--bark);border:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 24px;border-radius:14px;font-weight:600;font-size:17px;text-decoration:none;font-family:inherit;cursor:pointer;border:0}
+.btn.primary{background:var(--brand);color:var(--bark)}
 .btn.primary:hover{background:var(--brand-hover);color:var(--bark)}
 .btn.ghost{border:2px solid #FFFFFF;color:#FFFFFF;background:none}
 .btn.ghost:hover{border-color:var(--brand);color:var(--brand)}
+.btn.dark{background:var(--brand-ink);color:#fff}
+.btn.dark:hover{background:#264D3D;color:#fff}
+.btn.sm{min-height:44px;padding:0 16px;font-size:15px;border-radius:12px}
 .topo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+.light .eyebrow,.sec:not(.scene) .eyebrow{color:var(--brand-ink)}
 
-/* hero: a real BC contour sheet (TRIM, 40 m interval) under the crosshair, with the app's answer card pinned to the spot */
-.hero{position:relative;min-height:min(94vh,900px);color:#fff;display:flex;flex-direction:column;overflow:hidden;background:radial-gradient(120% 90% at 78% 40%,#2A2722 0%,#1B1915 55%,#14120F 100%)}
-.hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(20,18,15,.9) 0%,rgba(20,18,15,.6) 40%,rgba(20,18,15,0) 70%)}
+/* phone frame around a real screenshot from the app */
+.phone{border-radius:46px;border:10px solid #000;background:#000;box-shadow:0 30px 70px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08);overflow:hidden;width:100%;max-width:340px}
+.phone img{display:block;width:100%;height:auto;aspect-ratio:390/844}
+
+/* hero: the app's own screen, large and bleeding off the bottom edge, beside one line of what it does */
+.hero{position:relative;color:#fff;display:flex;flex-direction:column;overflow:hidden;background:radial-gradient(120% 90% at 78% 40%,#2A2722 0%,#1B1915 55%,#14120F 100%)}
+.hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(20,18,15,.92) 0%,rgba(20,18,15,.6) 45%,rgba(20,18,15,.15) 75%)}
 .hero>*{position:relative;z-index:2}
-.hero>.topo{position:absolute;z-index:0}
+.hero>.topo{position:absolute;z-index:0;opacity:.85}
 .hero>.wrap{width:100%}
-.nav{display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:22px 0}
+.hero>.wrap:first-of-type{z-index:5}
+.nav{display:flex;align-items:center;gap:24px;padding:20px 0}
 .mark{display:inline-flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:30px;text-transform:uppercase;color:#fff;text-decoration:none;letter-spacing:.02em}
 .mark svg{width:32px;height:32px;flex:none;border-radius:8px}
-.nav .links{display:flex;gap:24px;flex-wrap:wrap;margin-left:auto}
-.nav .links a{color:#fff;text-decoration:none;font-weight:500;font-size:16px}
-.nav .links a:hover{color:var(--brand)}
-.hero-body{flex:1;padding-top:24px;padding-bottom:64px}
-.hero-copy{max-width:560px;display:flex;flex-direction:column;gap:26px}
-.hero h1{font-size:clamp(54px,7vw,92px);line-height:.88}
-.hero .lede{font-size:20px;line-height:1.5;color:var(--soft);max-width:520px}
-.hero .kicker{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:-12px}
-.hero .lede+.lede{margin-top:-12px}
-.hero .fine{font-size:15px;color:var(--dim)}
+.nav .links{display:flex;gap:22px;margin-left:auto;align-items:center}
+.nav .links a:not(.btn){color:#fff;text-decoration:none;font-weight:500;font-size:16px}
+.nav .links a:not(.btn):hover{color:var(--brand)}
+.menu{display:none;margin-left:auto;position:relative}
+.menu summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:12px;border:2px solid rgba(255,255,255,.7);font-weight:600;font-size:15px}
+.menu summary::-webkit-details-marker{display:none}
+.menu[open] summary{background:#fff;color:var(--bark)}
+.menu[open]::before{content:'';position:fixed;inset:0;background:rgba(20,18,15,.7);z-index:9}
+.menu summary{position:relative;z-index:11}
+.menu .when-open{display:none}.menu[open] .when-open{display:inline}.menu[open] .when-closed{display:none}
+.menu nav{position:absolute;right:0;top:52px;z-index:10;background:var(--field);border-radius:16px;padding:8px;display:grid;min-width:220px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.menu nav a{color:var(--ink);text-decoration:none;font-weight:600;padding:12px 14px;border-radius:10px}
+.menu nav a:hover{background:var(--field2)}
+.hero-body{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:start;padding-top:40px}
+.hero-copy{max-width:600px;display:flex;flex-direction:column;gap:24px;padding-bottom:72px;padding-top:24px}
+.hero h1{font-size:clamp(50px,7vw,96px);line-height:.88}
+.hero .kicker{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:-8px}
+.hero .lede{font-size:21px;line-height:1.5;color:var(--soft);max-width:540px}
+.hero .fine{font-size:15px;color:var(--dim);max-width:520px}
 .ctas{display:flex;gap:14px;flex-wrap:wrap}
-.hero-body{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:56px;align-items:center}
-.hero-real{display:flex;flex-direction:column;align-items:center;gap:16px;width:316px;margin-right:max(0px,calc((100vw - 1200px)/2 - 40px))}
-.hero-real .phone{max-width:316px;transform:rotate(1.5deg);box-shadow:0 40px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08)}
-.hero-real .cap{font-size:13px;line-height:1.45;color:var(--soft);text-align:center;max-width:320px}
-.hero-real .cap b{color:#fff;font-weight:600}
-.hero-real .cap small{display:block;margin-top:6px;font-size:11.5px;color:var(--dim)}
-.screen .map img{width:100%;height:100%;display:block;object-fit:cover}
-.screen .ans.s-clear b{font-size:27px}
+.hero-shot{width:400px;margin-right:max(0px,calc((100vw - 1200px)/2 - 24px));margin-bottom:-156px;display:flex;flex-direction:column;align-items:center}
+.hero-shot .phone{max-width:400px}
+.hero-cap{display:flex;gap:10px;align-items:center;font-size:14px;line-height:1.45;color:var(--dim);padding:0 0 22px;margin:0;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}
+.hero-cap b{color:var(--soft);font-weight:600}
+.hero-cap svg{flex:none;color:var(--brand);margin-top:2px}
 
 /* the three answers: each has its own colour AND pattern, so they read in glare and with colour blindness */
 .s-no{background-color:var(--no);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.13) 0 10px,transparent 10px 20px)}
 .s-clear{background-color:var(--clear)}
 .s-unsure{background-color:#F2B12E;color:var(--ink)!important;background-image:radial-gradient(rgba(0,0,0,.16) 1.5px,transparent 1.6px);background-size:10px 10px}
 
-.band{background:var(--bark);color:var(--soft)}
-.band ul{list-style:none;margin:0;padding:22px 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 40px}
-.band li{display:flex;gap:12px;align-items:flex-start;font-size:16px;line-height:1.4}
+.band{background:var(--bark);color:var(--soft);position:relative;z-index:3}
+.band ul{list-style:none;margin:0;padding:26px 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 40px}
+.band li{display:flex;gap:12px;align-items:flex-start;font-size:16px;line-height:1.45}
 .band svg{flex:none;color:var(--brand);margin-top:1px}
 .band b{color:#fff;font-weight:600}
 
-section{scroll-margin-top:16px}
-.sec{padding:96px 0}
-.head{display:flex;flex-direction:column;gap:14px;max-width:760px;margin-bottom:36px}
-.head h2{font-size:56px;line-height:.95}
+section{scroll-margin-top:12px}
+.sec{padding:104px 0}
+.head{display:flex;flex-direction:column;gap:14px;max-width:780px;margin-bottom:40px}
+.head h2{font-size:58px;line-height:.95}
 .head p{font-size:19px;color:var(--muted)}
 .states{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .state{border-radius:16px;padding:22px 22px 24px;min-height:220px;display:flex;flex-direction:column;gap:10px;color:#fff}
@@ -89,87 +107,102 @@ section{scroll-margin-top:16px}
 .state p{font-size:16px;line-height:1.45}
 .state .eg{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,.3);font-size:14.5px}
 .state.s-unsure .eg{border-color:rgba(0,0,0,.2)}
-.note{margin-top:20px;font-size:16px;color:var(--muted);max-width:760px}
+.note{margin-top:20px;font-size:16px;color:var(--muted);max-width:780px}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:36px;padding-top:28px;border-top:2px solid var(--ink)}
+.cta-row p{font-size:17px;color:var(--muted)}
 
-/* dark contour sections: the map carries the mood, a dark panel carries the words */
+/* the map: the app's Areas layer, rifle against shotgun with shot, side by side on wide screens, a toggle on phones */
+.mapsec{position:relative;background:var(--bark);color:#fff;overflow:hidden;padding:112px 0 104px}
+.mapsec .topo{opacity:.45}
+.mapsec>.wrap{position:relative;z-index:2}
+.mapsec .head p{color:var(--soft)}
+.mapsec h2{font-size:clamp(46px,6vw,76px);line-height:.9}
+.pair{display:flex;justify-content:center;gap:56px;align-items:flex-start}
+.pair figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:18px;flex:0 1 340px}
+.pair figcaption{display:flex;flex-direction:column;gap:6px;text-align:center;max-width:320px}
+.pair figcaption b{font-family:'Barlow Condensed',sans-serif;font-size:26px;line-height:1;text-transform:uppercase}
+.pair figcaption span{font-size:15.5px;color:var(--soft)}
+.toggle{display:none;justify-content:center;gap:8px;margin:0 0 20px}
+.toggle button{font:600 16px 'IBM Plex Sans',sans-serif;min-height:46px;padding:0 18px;border-radius:12px;border:2px solid rgba(255,255,255,.6);background:none;color:#fff;cursor:pointer}
+.toggle button[aria-pressed=true]{background:#fff;color:var(--bark);border-color:#fff}
+.keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 40px;margin:64px 0 0;padding:0;list-style:none}
+.keys li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;font-size:16px;color:var(--soft)}
+.keys b{color:#fff;font-weight:600}
+.sw{grid-row:span 2;width:30px;height:22px;border-radius:5px;margin-top:2px}
+.sw.no{background:rgba(179,38,30,.45);box-shadow:inset 0 0 0 2px #E06A62}
+.sw.un{background:repeating-linear-gradient(-45deg,#D9B85A 0 2px,transparent 2px 6px);box-shadow:inset 0 0 0 1.5px #D9B85A}
+.sw.cl{background:#6B7A5E;box-shadow:inset 0 0 0 1.5px #9AAA8C}
+.mapsec .fineprint{margin-top:28px;font-size:13.5px;color:var(--dim);max-width:780px}
+
+/* open for hunting isn't open for target shooting: three short claims on the open page, no boxes */
+.vs3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;margin:0;padding:0;list-style:none}
+.vs3 li{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:2px solid var(--ink)}
+.vs3 i{font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-ink)}
+.vs3 b{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:30px;line-height:1;text-transform:uppercase}
+.vs3 span{color:var(--muted);font-size:17px}
+
+/* what every answer checks, with how far the checking has got today */
+.covsec{background:var(--field2)}
+.cov{margin:0;padding:0;list-style:none;display:grid}
+.cov li{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:8px 48px;padding:20px 0;border-top:2px solid var(--ink)}
+.cov li:last-child{border-bottom:2px solid var(--ink)}
+.cov b{display:block;font-size:19px}
+.cov .what{color:var(--muted);font-size:16.5px}
+.cov .today{font-size:16.5px;display:flex;gap:12px;align-items:flex-start}
+.cov .today strong{font-family:'Barlow Condensed',sans-serif;font-size:34px;line-height:.9;flex:none;width:2.6em;font-variant-numeric:tabular-nums}
+.cov .today small{display:block;color:var(--muted);font-size:15px}
+.arms{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
+.arms{align-items:baseline}
+.arms b{font-size:16px;margin-right:6px}
+.arms span{background:#fff;border-radius:6px;padding:5px 10px;font-weight:500;font-size:15px;color:var(--muted)}
+
+.basics{margin-top:24px;font-size:17px;max-width:780px}
+
+/* downrange (dark) and lanes (light): the tool's picture beside three steps */
 .scene{position:relative;color:#fff;background:var(--bark);overflow:hidden}
-.scene .topo{opacity:.7}
 .scene>.wrap{position:relative;z-index:2}
-.scene h2{font-size:clamp(44px,5.4vw,64px);line-height:.92}
+.scene h2,.lanes h2{font-size:clamp(44px,5.4vw,64px);line-height:.92}
 .scene p{color:var(--soft)}
-.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:center;padding:120px 0}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:start;padding-top:112px;padding-bottom:112px}
 .copy{display:flex;flex-direction:column;gap:18px}
-.media{display:flex;justify-content:center;min-width:0}
-.vs{display:grid;gap:12px;margin:6px 0 0;padding:0;list-style:none}
-.vs li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;padding:16px 18px;border-radius:14px;background:rgba(20,18,15,.72);border:1px solid rgba(255,255,255,.14)}
-.vs b{display:block;color:#fff;font-weight:600}
-.vs span{color:var(--soft);font-size:16px}
-.vs i{font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--bark);background:var(--brand);border-radius:8px;padding:4px 8px;white-space:nowrap}
-
-/* phone: the answer screen, drawn in HTML from the app's own layout */
-.phone{border-radius:44px;border:10px solid #000;background:#000;box-shadow:0 30px 70px rgba(0,0,0,.45);overflow:hidden;max-width:320px;width:100%}
-.screen{position:relative;aspect-ratio:390/780;background:#E9ECE6;color:#15191B;font-size:13px;line-height:1.4;overflow:hidden}
-.screen .map{position:absolute;inset:0;background:#DDE3D8}
-.screen .map svg{width:100%;height:100%;display:block}
-.screen .bar{position:absolute;top:0;left:0;right:0;padding:30px 14px 10px;display:flex;justify-content:space-between;align-items:center;font-weight:600}
-.screen .chip{background:#fff;border-radius:999px;padding:6px 12px;box-shadow:0 2px 8px rgba(0,0,0,.15);font-size:12.5px}
-.screen .xc{position:absolute;left:50%;top:36%;width:54px;height:54px;transform:translate(-50%,-50%);color:#15191B}
-.screen .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;padding:14px 16px 18px;box-shadow:0 -6px 24px rgba(0,0,0,.18);display:grid;gap:10px}
-.screen .grab{width:36px;height:4px;border-radius:2px;background:#D5DAD3;margin:0 auto}
-.screen .ans{border-radius:12px;padding:10px 12px;color:#fff}
-.screen .ans b{display:block;font-family:'Barlow Condensed',sans-serif;font-size:26px;line-height:.95;text-transform:uppercase}
-.screen .ans span{font-size:12.5px;font-weight:500}
-.screen .row{display:grid;grid-template-columns:16px minmax(0,1fr);gap:8px;align-items:start;font-size:12.5px}
-.screen .row svg{margin-top:2px}
-.screen .src{font-size:11.5px;color:#5B6560;border-top:1px solid #E3E6E1;padding-top:8px}
-
-.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px;margin:0;padding:0;list-style:none}
-.checks li{padding:18px 0;border-top:2px solid var(--ink)}
-.checks b{display:block;font-size:18px}
-.arms{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
-.arms span{border:2px solid var(--ink);border-radius:10px;padding:8px 14px;font-weight:600;font-size:16px}
-
-.safety{background:#ECEEE8}
-.safe{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.safe div{background:#fff;border-radius:16px;padding:20px 22px;display:grid;gap:6px;align-content:start;border-top:4px solid var(--brand-ink)}
-.safe b{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;line-height:1;text-transform:uppercase}
-.safe span{font-size:16px;color:var(--muted);line-height:1.5}
-.safe .pro-tag{border-top-color:var(--bark)}
-.safe .pro-tag b::after{content:'Pro';margin-left:10px;font-size:13px;letter-spacing:.06em;vertical-align:3px;padding:2px 7px;border-radius:6px;background:var(--bark);color:#fff}
-.basics{margin-top:24px;font-size:17px;max-width:760px}
-/* downrange check: the arc a round can reach in the direction you'll shoot, with what's mapped inside it */
-.dr{background:#1B1915}
-.dr .split{align-items:start}
-.eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+.media{display:flex;flex-direction:column;gap:14px;min-width:0}
 .steps{margin:4px 0 0;padding:0;list-style:none;counter-reset:s;display:grid;gap:14px}
 .steps li{counter-increment:s;display:grid;grid-template-columns:36px minmax(0,1fr);gap:4px 14px;color:var(--soft);font-size:17px}
 .steps li::before{content:counter(s);grid-row:span 2;width:32px;height:32px;border-radius:50%;background:var(--brand);color:var(--bark);font-weight:700;display:flex;align-items:center;justify-content:center}
 .steps b{color:#fff;font-weight:600}
-.dr-note{font-size:15.5px;border-left:3px solid #F2B12E;padding-left:12px}
-.dr-media{flex-direction:column;gap:14px;align-items:stretch}
-.dr-svg{width:100%;height:auto;display:block;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.lanes .steps li{color:var(--muted)}.lanes .steps b{color:var(--ink)}
+.lanes .steps li::before{background:var(--brand-ink);color:#fff}
+.limit{font-size:15.5px;border-left:3px solid var(--sand);padding-left:12px}
+.lanes .limit{border-color:var(--ink);color:var(--muted);max-width:780px}
+.lane-media{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start}
+.lane-side{display:flex;flex-direction:column;gap:12px}
+.steps3{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 40px;margin-top:40px}
+.steps3 li{align-content:start}
+.illus{font-size:13.5px;color:var(--dim);margin:0;line-height:1.4}
+.lanes .illus{color:var(--muted)}
+.dr-svg{width:100%;height:auto;display:block;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .dr-ring{fill:none;stroke:rgba(255,255,255,.28);stroke-width:1.2;stroke-dasharray:4 6}
-.dr-fan{fill:rgba(242,177,46,.22);stroke:#F2B12E;stroke-width:2}
-.dr-axis{stroke:#F2B12E;stroke-width:1.5;stroke-dasharray:2 5}
+.dr-fan{fill:rgba(230,227,220,.13);stroke:#E6E3DC;stroke-width:2}
+.dr-axis{stroke:#E6E3DC;stroke-width:1.5;stroke-dasharray:2 5}
 .dr-road{fill:none;stroke:#C9B37A;stroke-width:5}
 .dr-trail{fill:none;stroke:#E6E3DC;stroke-width:2.2;stroke-dasharray:7 6}
 .dr-prop{fill:none;stroke:#E6E3DC;stroke-width:2;stroke-dasharray:14 5 2 5}
-.dr-dot{fill:#F2B12E;stroke:#14120F;stroke-width:2}
-.dr-bldg{fill:#B8B3A9;stroke:#14120F;stroke-width:2}
-.dr-bldg.hit{fill:#F2B12E}
+.dr-dot{fill:#fff;stroke:#14120F;stroke-width:2}
+.dr-bldg{fill:#8A857B;stroke:#14120F;stroke-width:2}
+.dr-bldg.hit{fill:#fff;stroke:#14120F;stroke-width:2.5}
+.dr-halo{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:3 3}
 .ln-fan{fill:rgba(143,203,174,.22);stroke:#8FCBAE;stroke-width:2}
-.ln-no{fill:rgba(179,38,30,.16);stroke:#B3261E;stroke-width:1.5;stroke-dasharray:5 5}
+.ln-no{fill:url(#cross);stroke:#8A857B;stroke-width:1.5;stroke-dasharray:5 5}
 .ln-tgt{fill:#8FCBAE;stroke:#14120F;stroke-width:2}
 .ln-ground{fill:#3A362E}
 .ln-line{fill:none;stroke:#C9B37A;stroke-width:2.5}
-
 .dr-you{fill:var(--brand);stroke:#14120F;stroke-width:3}
 .dr-youl{fill:#fff;font:600 15px 'IBM Plex Sans',sans-serif}
 .dr-km{fill:rgba(255,255,255,.7);font:500 13px 'IBM Plex Sans',sans-serif}
 .dr-tag rect{fill:rgba(20,18,15,.88);stroke:rgba(255,255,255,.3)}
-.dr-tag rect.warn{fill:#F2B12E;stroke:none}
 .dr-tag text{fill:#fff;font:600 13px 'IBM Plex Sans',sans-serif}
-.dr-tag rect.warn+text{fill:#14120F}
+.dr-tag.hot rect{fill:#fff;stroke:none}
+.dr-tag.hot text{fill:#14120F}
 .dr-tag.dim text{fill:var(--dim);font-weight:500;font-size:12px}
 .dr-list{background:#fff;color:var(--ink);border-radius:16px;padding:14px 16px;display:grid;gap:2px}
 .dr-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline;padding-bottom:6px}
@@ -177,249 +210,295 @@ section{scroll-margin-top:16px}
 .dr-head span{font-size:14px;color:var(--muted)}
 .dr-row{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #E3E1DA;font-size:16px}
 .dr-row i{width:10px;height:10px;border-radius:50%;background:#B8B3A9}
-.dr-row.warn i{background:#F2B12E;box-shadow:0 0 0 3px rgba(242,177,46,.3)}
-.dr-row.warn span{font-weight:600}
+.dr-row.hit i{background:var(--ink);box-shadow:0 0 0 3px rgba(20,18,15,.18)}
+.dr-row.hit span{font-weight:600}
 .dr-row em{font-style:normal;font-variant-numeric:tabular-nums;color:var(--muted)}
-.pro-head{position:relative;min-height:440px;display:flex;align-items:flex-end;background:var(--bark);color:#fff;overflow:hidden}
-.pro-head .topo{opacity:.55}
-.pro-head::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(27,25,21,1) 0%,rgba(27,25,21,.6) 40%,rgba(27,25,21,0) 80%)}
-.pro-head .wrap{position:relative;z-index:2;width:100%;padding-bottom:28px}
-.pro-head h2{font-size:clamp(52px,7vw,88px);line-height:.88;max-width:860px}
-.pro{background:var(--bark);color:#fff;padding:24px 0 104px}
-.pro p{color:var(--soft)}
-.pro h3{font-family:"Barlow Condensed",sans-serif;font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.02em}
-.pro .incl{display:inline-block;margin-left:10px;font:600 12px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;vertical-align:5px;padding:4px 8px;border-radius:6px;background:var(--brand);color:var(--bark)}
-.feats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0;padding:0;list-style:none}
-.feats li{background:var(--bark2);border-radius:16px;padding:18px 20px;display:grid;gap:6px;align-content:start}
-.feats b{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;line-height:1;text-transform:uppercase;color:#fff}
-.feats span{color:var(--dim);font-size:15.5px;line-height:1.45}
-.price{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:760px}
-.plan{background:var(--bark2);border-radius:16px;padding:22px;display:grid;gap:6px;align-content:start}
-.plan b{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:34px;line-height:1}
-.plan span{display:block;color:var(--dim);font-size:16px}
-.plan.found{background:#22302A;box-shadow:inset 0 0 0 2px var(--brand)}
-.plan.found em{font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:14px;color:var(--brand)}
+
+/* Pro: one picture of what it does for you (alerts), then the features grouped by when you'd use them, then a choice of plan */
+.pro{background:var(--bark);color:#fff;position:relative;overflow:hidden}
+.pro .topo{opacity:.35}
+.pro>.wrap{position:relative;z-index:2;padding-top:112px;padding-bottom:112px}
+.pro-top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:56px;align-items:center;margin-bottom:64px}
+.pro-top h2{font-size:clamp(46px,6vw,78px);line-height:.94;margin-top:10px}
+.pro-top p{color:var(--soft);font-size:19px;margin-top:18px;max-width:560px}
+.alerts{display:grid;gap:10px}
+.alert{display:grid;grid-template-columns:36px minmax(0,1fr);gap:4px 12px;background:rgba(245,246,243,.96);color:var(--ink);border-radius:18px;padding:14px 16px;box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.alert:nth-child(2){margin-left:24px}.alert:nth-child(3){margin-left:48px;opacity:.92}
+.alert svg{grid-row:span 3;width:36px;height:36px;border-radius:9px}
+.alert .t{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted)}
+.alert b{font-size:16px;line-height:1.3}
+.alert span{font-size:14.5px;color:var(--muted);line-height:1.4}
+.alerts p.illus{margin:6px 0 0 48px;color:var(--dim);font-size:13.5px}
+.groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}
+.groups h3{font-size:26px;line-height:1;padding-bottom:12px;border-bottom:2px solid var(--brand);margin-bottom:6px}
+.groups ul{margin:0;padding:0;list-style:none;display:grid}
+.groups li{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.14);font-size:15.5px;color:var(--dim);line-height:1.45}
+.groups li b{display:block;color:#fff;font-weight:600;font-size:16.5px;margin-bottom:2px}
+.groups a{color:var(--brand)}
+.buy{margin-top:72px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:16px;align-items:stretch}
+.plan{border-radius:18px;padding:22px 24px;display:grid;gap:4px;align-content:start;border:2px solid rgba(255,255,255,.22)}
+.plan.best{border-color:var(--brand);background:rgba(143,203,174,.08)}
+.plan em{font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:15px;color:var(--brand)}
+.plan b{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:1}
+.plan b small{font-size:22px;color:var(--soft)}
+.plan span{display:block;color:var(--soft);font-size:16px}
+.buy .go{display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:260px}
+.buy .go p{font-size:14px;color:var(--dim)}
+.pro .free{margin-top:20px;font-size:15px;color:var(--dim);max-width:780px}
 
 .priv{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:64px;align-items:start}
 .priv ul{list-style:none;margin:0;padding:0;display:grid}
 .priv li{padding:16px 0;border-top:2px solid var(--ink)}
 .priv li b{display:block;font-size:18px}
-.faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 56px}
-.faq h3{font-size:26px;margin-bottom:6px}
 
+/* the close: the sign-up form itself, on the page */
 .final{position:relative;color:#fff;background:var(--bark);overflow:hidden}
 .final .topo{opacity:.6}
-.final::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(20,18,15,.95) 0%,rgba(20,18,15,.6) 60%,rgba(20,18,15,.3) 100%)}
-.final .wrap{position:relative;z-index:2;padding-top:180px;padding-bottom:96px;display:flex;flex-direction:column;gap:22px;align-items:flex-start}
-.final h2{font-size:clamp(48px,6.4vw,84px);line-height:.9;max-width:900px}
-.final p{color:var(--soft);font-size:20px;max-width:620px}
+.final::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(20,18,15,.96) 0%,rgba(20,18,15,.7) 60%,rgba(20,18,15,.35) 100%)}
+.final .wrap{position:relative;z-index:2;padding-top:112px;padding-bottom:96px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:56px;align-items:start}
+.final h2{font-size:clamp(48px,6.4vw,84px);line-height:.9}
+.final .say{display:flex;flex-direction:column;gap:20px;padding-top:24px}
+.final .say p{color:var(--soft);font-size:20px;max-width:560px}
+.final .say a{color:#fff}
+.slot{background:var(--field);color:var(--ink);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
 
 footer{background:var(--bark);color:var(--soft)}
 .foot{display:flex;gap:12px 24px;flex-wrap:wrap;align-items:center;padding-top:36px;padding-bottom:18px;font-size:15px}
 .foot a{color:#fff}.foot a:hover{color:var(--brand)}
-.foot .mark{font-size:24px}.foot .mark svg{width:26px;height:26px}
+.foot .mark{font-size:24px}
 .small{color:var(--dim);font-size:13px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px}
 .small a{color:var(--dim)}
 
-@media (max-width:1000px){
-.hero-body{grid-template-columns:minmax(0,1fr);gap:44px;padding-bottom:48px}
-.hero-real{margin:0 auto;width:min(320px,100%)}
-.hero-real .phone{transform:none}
+/* early access: one form, shown in the closing section and moved into the dialog when a button opens it */
+dialog.ea{border:0;padding:0;border-radius:22px;width:min(480px,calc(100% - 32px));max-height:calc(100% - 32px);background:var(--field);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+dialog.ea::backdrop{background:rgba(20,18,15,.72)}
+.ea-form,.ea-done{display:flex;flex-direction:column;gap:16px;padding:26px 24px 24px}
+.ea-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ea-top h2,.ea-top h3{font-size:40px;line-height:.92}
+.ea-x{flex:none;width:44px;height:44px;border-radius:999px;border:0;background:#E3E1DA;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.slot .ea-x{display:none}
+.ea-form label{font-weight:600;font-size:15px;display:flex;flex-direction:column;gap:6px}
+.ea-form input[type=email]{font:inherit;font-size:18px;min-height:54px;border-radius:12px;border:2px solid var(--ink);padding:0 14px;background:#fff;color:var(--ink);width:100%}
+.ea-form fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ea-form legend{font-weight:600;font-size:15px;padding:0;margin-bottom:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.opt span{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:12px;border:2px solid #CFCCC3;font-weight:600;font-size:16px;background:#fff}
+.opt input:checked+span{border-color:var(--brand-ink);background:#E3F1EA;box-shadow:inset 0 0 0 1px var(--brand-ink)}
+.opt input:focus-visible+span{outline:3px solid var(--brand-ink);outline-offset:2px}
+.ea-form .btn,.ea-done .btn{width:100%}
+.ea-fine{font-size:14px;color:var(--muted);line-height:1.45}
+.ea-err{margin:0;padding:10px 12px;border-radius:10px;background:#FBE4E1;font-weight:600;font-size:15px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.ea-done p{font-size:17px}
+[hidden]{display:none!important}
+
+@media (max-width:1060px){
+.hero-body{grid-template-columns:minmax(0,1fr);gap:8px}
+.hero-copy{padding-bottom:24px}
+.hero-shot{margin:0 auto -140px;width:min(360px,100%)}
+.pro-top{grid-template-columns:minmax(0,1fr)}
+.groups{grid-template-columns:repeat(2,minmax(0,1fr))}
+.buy{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.buy .go{grid-column:1/-1}
 }
 @media (max-width:900px){
-.split,.priv{grid-template-columns:minmax(0,1fr);gap:40px}
-.split{padding:88px 0}
-.states,.faq,.checks,.price,.feats,.band ul,.safe{grid-template-columns:minmax(0,1fr)}
-.band ul{gap:12px}
+.nav .links a:not(.btn){display:none}
+.menu{display:block}
+.nav .links{margin-left:0}
+.split,.priv,.final .wrap{grid-template-columns:minmax(0,1fr);gap:40px}
+.split{padding-top:88px;padding-bottom:88px}
+.states,.vs3,.keys,.band ul,.steps3,.lane-media{grid-template-columns:minmax(0,1fr)}
+.cov li{grid-template-columns:minmax(0,1fr)}
 .head h2{font-size:46px}
 .state{min-height:0}
+.pair{gap:0}
+.pair figure:not(.on){display:none}
+.toggle{display:flex}
+.keys{margin-top:40px}
 }
 @media (max-width:560px){
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.nav{gap:12px}
-.nav .links{gap:16px;margin-left:0;width:100%}
-.hero::before{background:linear-gradient(0deg,rgba(20,18,15,.95) 0%,rgba(20,18,15,.75) 60%,rgba(20,18,15,.45) 100%)}
-.hero .lede{font-size:19px}
-.btn{width:100%}
-.phone{max-width:280px}
+.nav{gap:10px;padding:14px 0}
+.mark{font-size:26px}
+.hero-body{padding-top:8px}
+.hero-copy{gap:18px;padding-top:4px}
+.hero h1{font-size:48px}
+.hero .kicker{font-size:15px;letter-spacing:.06em;line-height:1.3}
+.hero .lede{font-size:18px}
+.hero .ghost{display:none}
+.hero::before{background:linear-gradient(0deg,rgba(20,18,15,.9) 0%,rgba(20,18,15,.75) 60%,rgba(20,18,15,.5) 100%)}
+.hero-shot{width:300px;margin-bottom:0}
+.hero-shot .phone{border-radius:34px 34px 0 0;border-bottom:0}
+.hero-shot .phone img{aspect-ratio:390/470;object-fit:cover;object-position:50% 50%}
+.hero .fine{font-size:14px}
+.hero-copy{padding-bottom:20px}
+.ctas .btn{width:100%}
+.groups{grid-template-columns:minmax(0,1fr)}
+.buy{grid-template-columns:minmax(0,1fr)}
+.sec{padding:80px 0}
+.mapsec,.pro>.wrap{padding-top:80px;padding-bottom:80px}
+.alert:nth-child(2){margin-left:12px}.alert:nth-child(3){margin-left:24px}
+.alerts .illus{margin-left:24px}
+.final .wrap{padding-top:96px;padding-bottom:64px}
+.nav .btn.sm{padding:0 12px;visibility:hidden}
+.scrolled .nav .btn.sm{visibility:visible}
 }
-
-/* early access sign-up */
-dialog.ea{border:0;padding:0;border-radius:22px;width:min(480px,calc(100% - 32px));max-height:calc(100% - 32px);background:var(--field);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5)}
-dialog.ea::backdrop{background:rgba(20,18,15,.72)}
-.ea form,.ea .done{display:flex;flex-direction:column;gap:16px;padding:26px 24px 24px}
-.ea .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.ea h2{font-size:40px;line-height:.92}
-.ea .x{flex:none;width:44px;height:44px;border-radius:999px;border:0;background:#E3E1DA;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
-.ea label{font-weight:600;font-size:15px;display:flex;flex-direction:column;gap:6px}
-.ea input[type=email]{font:inherit;font-size:18px;min-height:54px;border-radius:12px;border:2px solid var(--ink);padding:0 14px;background:#fff;color:var(--ink);width:100%}
-.ea fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.ea legend{font-weight:600;font-size:15px;padding:0;margin-bottom:8px}
-.ea .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ea .opt{position:relative}
-.ea .opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
-.ea .opt span{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:12px;border:2px solid #CFCCC3;font-weight:600;font-size:16px;background:#fff}
-.ea .opt input:checked+span{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
-.ea .opt input:focus-visible+span{outline:3px solid var(--brand-ink);outline-offset:2px}
-.ea .btn{width:100%}
-.ea .btn.primary{background:var(--brand-ink);color:#fff}
-.ea .btn.primary:hover{background:#264D3D;color:#fff}
-.ea .fine{font-size:14px;color:var(--muted);line-height:1.45}
-.ea .err{margin:0;padding:10px 12px;border-radius:10px;background:#FBE4E1;font-weight:600;font-size:15px}
-.ea .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.ea .done p{font-size:17px}
-[hidden]{display:none!important}
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="logo" viewBox="0 0 108 108"><rect width="108" height="108" rx="24" fill="#8E1B2E"/><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" transform="translate(-6.5 -5) scale(1.12)"><path d="M33 28H66L76 38V80H33Z" stroke-width="4.6"/><path d="M66 28V38H76" stroke-width="2.8" stroke-opacity=".6"/><circle cx="54.5" cy="57" r="17" stroke-width="2.8"/><circle cx="54.5" cy="57" r="12" stroke-width="2.8"/><circle cx="54.5" cy="57" r="7.5" fill="#fff" stroke="none"/><path d="M50.8 57.2 53.6 60 58.4 54.6" stroke="#8E1B2E" stroke-width="3"/></g></symbol>
-<symbol id="xh" viewBox="0 0 34 34"><circle cx="17" cy="17" r="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M17 1v9M17 24v9M1 17h9M24 17h9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+<symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+<pattern id="cross" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="rgba(138,133,123,.12)"/><path d="M0 5h10" stroke="#8A857B" stroke-width="1.4"/></pattern>
 </defs></svg>
 
 <header class="hero" id="top">
 <img class="topo" src="img/contours.svg" alt="" aria-hidden="true">
 <div class="wrap">
-<nav class="nav" aria-label="Main">
-<a class="mark" href="#top">Shootable</a>
-<div class="links"><a href="#answers">How it answers</a><a href="#checks">What it checks</a><a href="#safety">Safety</a><a href="#downrange">Downrange</a><a href="#lanes">Lanes</a><a href="#pro">Pro</a><a href="faq/">Questions</a></div>
-</nav>
+<div class="nav">
+<a class="mark" href="#top" aria-label="Shootable, back to top">Shootable</a>
+<nav class="links" aria-label="Main"><a href="#answers">How it answers</a><a href="#map">The map</a><a href="#checks">What it checks</a><a href="#safety">Safety</a><a href="#pro">Pro</a><a href="faq/">Questions</a><a class="btn primary sm" href="#early-access" data-early>Get early access</a></nav>
+<details class="menu"><summary><span class="when-closed">Menu</span><span class="when-open">Close</span></summary><nav aria-label="Sections"><a href="#answers">How it answers</a><a href="#map">The map</a><a href="#checks">What it checks</a><a href="#safety">Safety</a><a href="#downrange">Downrange</a><a href="#lanes">Lanes</a><a href="#pro">Pro</a><a href="faq/">Questions</a></nav></details>
+</div>
 </div>
 <div class="wrap hero-body">
 <div class="hero-copy">
-<p class="kicker">When the range isn't enough</p>
-<h1>Find room to shoot. Know it's allowed and safe.</h1>
-<p class="lede">Ranges are few, booked up and short on distance. BC's Crown land has the room, but no signs: closed areas, town bylaws, parks and fire orders decide where you can shoot, and what's downrange decides whether you should.</p>
-<p class="lede">Put the crosshair on a spot and pick your firearm. Shootable gives you one answer with the rule behind it, and shows what's in your line of fire.</p>
+<p class="kicker">Crown land, towns, parks and fire orders</p>
+<h1>Check any spot before you shoot.</h1>
+<p class="lede">Tap a spot and pick your firearm. Shootable tells you whether a rule bans shooting there today, names the rule, and shades the map around you.</p>
 <div class="ctas">
 <a class="btn primary" href="#early-access" data-early>Get early access</a>
 <a class="btn ghost" href="#answers">See how it answers</a>
 </div>
-<p class="fine">Coming to Google Play first, then the App Store. The answer is free for every spot in BC.</p>
+<p class="fine">Google Play first, then the App Store. BC now, Alberta next. Checking a spot is always free.</p>
 </div>
-<!-- Hero phone: a real answer. The engine (app/engine.js, rifle) was run on the published BC pack 2026.11.04-v0 plus the fire feed at
-     -120.9028, 50.0525 (a forest road south of Merritt): No prohibition found, with the three conditions shown. The map is drawn
-     by scripts/web/render_hero_map.py from BC open data. When the pack changes, re-run the engine at this spot, update the
-     answer, the date chip and the sources line, and re-render the map. If the answer is no longer clear, pick another spot. -->
-<div class="hero-real">
-<div class="phone" role="img" aria-label="Shootable's answer screen for a rifle at a spot on a forest road south of Merritt: No prohibition found, with the three conditions that apply there.">
-<div class="screen" aria-hidden="true">
-<div class="map"><img src="img/map-merritt.svg" alt="" width="390" height="780"></div>
-<div class="bar"><span class="chip">Rifle</span><span class="chip">Data as of Nov 4</span></div>
-<svg class="xc"><use href="#xh"/></svg>
-<div class="sheet">
-<div class="grab"></div>
-<div class="ans s-clear"><b>No prohibition found</b><span>No rule we check bans a rifle here today.</span></div>
-<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6560" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/></svg><span>Stay more than 100 m from any dwelling, school, church, or occupied farm building.</span></div>
-<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6560" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/></svg><span>Not from or on a highway's road allowance.</span></div>
-<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6560" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/></svg><span>Thompson-Nicola noise bylaw: no persistent gunfire that disturbs people nearby.</span></div>
-<div class="src">Sources · Closed Areas Regulation, current to Oct 27, 2026 · TNRD Bylaw 2480 · Report an error</div>
-</div>
-</div>
-</div>
-<p class="cap"><b>A real answer from the app's engine.</b> A forest-road spot south of Merritt, checked against the BC rules published Nov 4, 2026. Your answer depends on your exact spot and firearm.<small>Map: BC Data Catalogue (TRIM contours, Digital Road Atlas, Freshwater Atlas). Contains information licensed under the Open Government Licence – British Columbia.</small></p>
+<!-- Hero: a real screen from the app (app/ in the shootable repo), rifle, BC pack 2026.11.05-v0 with the fire feed of Nov 6:
+     -120.9028, 50.0525, Crown land south of Merritt, answers No prohibition found; Merritt's Coldwater valley and the highway
+     corridor are shaded Not confirmed. The downrange arc is hidden for the picture. When the pack changes, re-check the spot
+     (node app/engine.js) and recapture; if it no longer answers clear, pick another spot. -->
+<div class="hero-shot">
+<div class="phone"><img src="img/app-merritt-rifle.webp" srcset="img/app-merritt-rifle-1x.webp 390w, img/app-merritt-rifle.webp 780w" sizes="(max-width:560px) 300px, 400px" width="390" height="844" alt="Shootable on a phone: a map of the hills south of Merritt with a pin on Crown land and the valley around Coldwater shaded Not confirmed. The answer for a rifle reads No prohibition found, with three conditions: stay more than 100 m from any dwelling, school, church or occupied farm building; don't shoot from a highway's road allowance; and the Thompson-Nicola noise bylaw."></div>
 </div>
 </div>
 </header>
 
 <div class="band">
 <div class="wrap"><ul>
-<li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l6-12 4 7 3-5 5 10H3Z"/></svg><span><b>Any spot in BC.</b> Crown land, towns, regional districts, parks and recreation sites.</span></li>
+<li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span><b>Any spot in BC.</b> Tap the map, or search a town, lake, park or GPS coordinates, UTM included.</span></li>
 <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg><span><b>Built for target shooting.</b> Rules that hunters are exempt from still count here.</span></li>
-<li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6Z"/><path d="M9 12h7M9 16h5"/></svg><span><b>Shows its work.</b> Each answer names the regulation or bylaw, the section and how old the data is.</span></li>
-</ul></div>
+<li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6Z"/><path d="M9 12h7M9 16h5"/></svg><span><b>Shows its work.</b> Every answer names the regulation or bylaw and the date of the rules on your phone.</span></li>
+</ul>
+<p class="hero-cap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg><span><b>Real app screen</b> · rifle, Crown land south of Merritt · BC rules of Nov 4, 2026 · map © OpenStreetMap contributors</span></p>
+</div>
 </div>
 
 <section id="answers" class="sec">
 <div class="wrap">
 <div class="head">
+<span class="eyebrow">How it answers</span>
 <h2>Three answers, and the reason for each</h2>
-<p>Every check ends in one of these. Each has its own colour and its own pattern, so you can tell them apart in bright sun or with colour blindness.</p>
+<p>Every check ends in one of these, in the app and on the map. Each has its own colour and its own pattern, so you can tell them apart in bright sun or with colour blindness.</p>
 </div>
 <div class="states">
-<div class="state s-no"><h3>Prohibited</h3><p>A regulation or bylaw bans discharging your firearm at this spot. The answer names it and quotes the section.</p><p class="eg">Inside Vancouver, any rifle: City of Vancouver By-law 2280.</p></div>
-<div class="state s-clear"><h3>No prohibition found</h3><p>Every rule Shootable checks allows it here. You still choose a safe backstop and stay clear of people and buildings.</p><p class="eg">Comes with the rules that apply everywhere, like 100 m from any dwelling.</p></div>
-<div class="state s-unsure"><h3>Not confirmed</h3><p>Something here can't be settled from the data yet: a boundary no one has drawn, or a bylaw a person hasn't checked. Shootable won't guess.</p><p class="eg">Says exactly what's missing, and who to ask.</p></div>
+<div class="state s-no"><h3>Prohibited</h3><p>A regulation or bylaw bans discharging your firearm at this spot today. The answer names it and the section.</p><p class="eg">Inside Vancouver, any rifle: City of Vancouver By-law 2280.</p></div>
+<div class="state s-clear"><h3>No prohibition found</h3><p>None of the rules Shootable checks bans it here. You still choose a safe backstop and stay clear of people and buildings.</p><p class="eg">Comes with the rules that apply everywhere, like 100 m from any dwelling.</p></div>
+<div class="state s-unsure"><h3>Not confirmed</h3><p>Something here can't be settled from the data yet: a boundary no one has checked, or a bylaw a person hasn't verified. Shootable won't guess.</p><p class="eg">Says exactly what's missing, and who to ask.</p></div>
 </div>
-<p class="note">No prohibition found means the rules Shootable checks don't ban it there. It isn't a permit. When a source changes and hasn't been checked again, the answer drops to Not confirmed until it is.</p>
+<p class="note">No prohibition found isn't a permit. When a source changes and hasn't been checked again, the answer drops to Not confirmed until it is.</p>
+<div class="cta-row"><a class="btn dark" href="#early-access" data-early>Get early access</a><p>Android first, then iPhone. We'll email you once when it's ready.</p></div>
 </div>
 </section>
 
-<section id="field" class="scene">
+<section id="map" class="mapsec">
 <img class="topo" src="img/contours.svg" alt="" aria-hidden="true" loading="lazy">
-<div class="wrap split">
-<div class="copy">
-<h2>Open for hunting isn't open for target shooting</h2>
-<p>Most BC shooting rules were written with hunters in mind, and many of them exempt a licensed hunter. A target shooter on the same spot gets no exemption.</p>
-<ul class="vs">
-<li><i>Fraser Valley</i><div><b>No shooting within 400 m of many roads</b><span>The Closed Areas Regulation closes road corridors to shooting, and Shootable draws them on the map.</span></div></li>
-<li><i>Town bylaws</i><div><b>A hunting season doesn't open a town</b><span>Many towns ban discharge everywhere, or allow it only in mapped zones while hunting. Shootable reads the bylaw and its map.</span></div></li>
-<li><i>Shot only</i><div><b>Your firearm changes the answer</b><span>Some areas allow shotguns with shot but no rifles or slugs. Air guns and bows count as firearms in some bylaws and not in others.</span></div></li>
-</ul>
-</div>
-<div class="media">
-<div class="phone" role="img" aria-label="Shootable's answer screen: Not confirmed, a closed area nearby whose boundary isn't mapped yet, with the conditions that apply everywhere.">
-<div class="screen" aria-hidden="true">
-<div class="map"><svg viewBox="0 0 390 780" preserveAspectRatio="xMidYMid slice"><image href="img/contours.svg" x="-300" y="-40" width="1000" height="500" opacity=".9" style="filter:invert(1) brightness(.55)"/><path d="M-10 420 C 80 380, 160 340, 230 300 S 360 220, 400 200" stroke="#fff" stroke-width="9" fill="none"/><path d="M-10 420 C 80 380, 160 340, 230 300 S 360 220, 400 200" stroke="#C9B37A" stroke-width="5" fill="none"/><path d="M40 60 L250 40 L330 160 L180 230 L60 180 Z" fill="#F2B12E" fill-opacity=".22" stroke="#8A6D00" stroke-width="2" stroke-dasharray="6 5"/></svg></div>
-<div class="bar"><span class="chip">Rifle</span><span class="chip">Data as of Nov 2</span></div>
-<svg class="xc"><use href="#xh"/></svg>
-<div class="sheet">
-<div class="grab"></div>
-<div class="ans s-unsure"><b>Not confirmed</b><span>Closed area nearby: its map hasn't been checked yet.</span></div>
-<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8A6D00" stroke-width="2.6" stroke-linecap="round"><path d="M12 7v6M12 17h.01"/></svg><span>Chilliwack Valley: firearms using shot only. B.C. Reg. 76/84, Sch. 9 item 10</span></div>
-<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6560" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/></svg><span>Stay more than 100 m from any dwelling, school, church, or occupied farm building.</span></div>
-<div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6560" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/></svg><span>Not from or on a highway's road allowance.</span></div>
-<div class="src">Sources · Closed Areas Regulation, current to Oct 27, 2026 · Report an error</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<section id="checks" class="sec">
-<div class="wrap">
-<div class="head" style="margin-bottom:24px">
-<h2>What every answer checks</h2>
-<p>Each check shows where it comes from and how old your copy is.</p>
-</div>
-<ul class="checks">
-<li><b>Closed areas</b>All 221 areas in BC's Closed Areas Regulation (B.C. Reg. 76/84) that restrict shooting: no-shooting areas, shot-only areas, seasonal closures and specified Crown land.</li>
-<li><b>Town and regional bylaws</b>Every municipality and regional district in BC. A bylaw counts only after a person has read its text against the source.</li>
-<li><b>Parks and reserves</b>Provincial parks and ecological reserves, and regional parks whose bylaws ban discharge.</li>
-<li><b>Recreation sites</b>BC recreation sites, where firing into the developed area isn't allowed.</li>
-<li><b>First Nations reserves</b>Reserve land answers Not confirmed, with a note to contact the Nation.</li>
-<li><b>Fire and evacuation orders</b>BC Wildfire Service area restrictions and local evacuation orders close the area. Fire bans are listed, including exploding targets.</li>
-<li><b>Rules that apply everywhere</b>100 m from any dwelling, school, church or occupied farm building, and the highway road allowance. Listed on every answer.</li>
-</ul>
-<div class="arms" aria-label="Firearms you can pick"><span>Rifle</span><span>Shotgun with shot</span><span>Shotgun with slugs</span><span>Handgun</span><span>Muzzleloader</span><span>Air gun, low power</span><span>Air gun, high power</span><span>Bow or crossbow</span></div>
-<p class="note">Restricted and prohibited firearms get their own answer: approved ranges only.</p>
-</div>
-</section>
-
-<section id="safety" class="sec safety">
 <div class="wrap">
 <div class="head">
+<span class="eyebrow">The map</span>
+<h2>See where the rules bite, for your firearm</h2>
+<p>Turn on Areas and the map shades every place a rule Shootable checks bans your firearm today, and every place it can't confirm yet. Change firearm and the map changes with it.</p>
+</div>
+<div class="toggle" role="group" aria-label="Firearm shown">
+<button type="button" aria-pressed="true" data-show="rifle">Rifle</button><button type="button" aria-pressed="false" data-show="shot">Shotgun with shot</button>
+</div>
+<div class="pair">
+<figure class="on" data-fig="rifle">
+<div class="phone"><img src="img/app-tricities-rifle.webp" srcset="img/app-tricities-rifle-1x.webp 390w, img/app-tricities-rifle.webp 780w" sizes="340px" width="390" height="844" loading="lazy" alt="Shootable's map of Coquitlam and Pitt Meadows with Rifle chosen: both towns shaded red for Prohibited, the hills to the north and the river corridors hatched for Not confirmed."></div>
+<figcaption><b>Rifle</b><span>Coquitlam and Pitt Meadows ban rifles town-wide, so both towns are red.</span></figcaption>
+</figure>
+<figure data-fig="shot">
+<div class="phone"><img src="img/app-tricities-shot.webp" srcset="img/app-tricities-shot-1x.webp 390w, img/app-tricities-shot.webp 780w" sizes="340px" width="390" height="844" loading="lazy" alt="The same map with Shotgun with shot chosen: Coquitlam and Pitt Meadows now hatched for Not confirmed instead of red."></div>
+<figcaption><b>Shotgun with shot</b><span>Their bylaws allow shot in mapped zones. Until Shootable has checked those maps, the towns are Not confirmed.</span></figcaption>
+</figure>
+</div>
+<ul class="keys">
+<li><span class="sw no" aria-hidden="true"></span><b>Prohibited</b>A rule Shootable checks bans your firearm there today.</li>
+<li><span class="sw un" aria-hidden="true"></span><b>Not confirmed</b>A boundary isn't checked yet, or a town's bylaw isn't verified.</li>
+<li><span class="sw cl" aria-hidden="true"></span><b>Unshaded</b>No rule Shootable checks bans it. Tap for the answer and the rules that apply everywhere.</li>
+</ul>
+<p class="fineprint">The shading is a guide built from the same rules as the answer. The answer for the spot you tap, with your GPS accuracy taken into account, is the one to go by. Real screens from the app, BC rules of Nov 4, 2026. Map © OpenStreetMap contributors.</p>
+</div>
+</section>
+
+<section id="field" class="sec">
+<div class="wrap">
+<div class="head">
+<span class="eyebrow">Why it's different</span>
+<h2>Open for hunting isn't open for target shooting</h2>
+<p>Most BC shooting rules were written with hunters in mind, and many of them exempt a licensed hunter. A target shooter on the same spot gets no exemption.</p>
+</div>
+<ul class="vs3">
+<li><i>Fraser Valley</i><b>No shooting within 400 m of many roads</b><span>The Closed Areas Regulation closes road corridors to recreational shooting. Shootable shades them on the map.</span></li>
+<li><i>Town bylaws</i><b>A hunting season doesn't open a town</b><span>Many towns ban discharge everywhere, or allow it only in mapped zones while hunting. Shootable reads the bylaw and its map.</span></li>
+<li><i>Shot only</i><b>Your firearm changes the answer</b><span>Some areas allow shotguns with shot but no rifles or slugs. Air guns and bows count as firearms in some bylaws and not in others.</span></li>
+</ul>
+</div>
+</section>
+
+<section id="checks" class="sec covsec">
+<div class="wrap">
+<div class="head">
+<span class="eyebrow">Coverage</span>
+<h2>What every answer checks, and how far we've got</h2>
+<p>A source counts only after a person has checked it against the original. These are the numbers in the app today, from the BC rules of Nov 4, 2026. Each area or bylaw we finish turns Not confirmed into a firm answer, and your phone gets it with the next update.</p>
+</div>
+<ul class="cov">
+<li><div><b>Closed areas</b><span class="what">All 220 areas in BC's Closed Areas Regulation (B.C. Reg. 76/84) that restrict shooting: no-shooting areas, shot-only areas, seasonal closures and specified Crown land.</span></div><div class="today"><strong>31</strong><span>mapped and checked<small>Near the other 189, answers say Not confirmed until each map is checked.</small></span></div></li>
+<li><div><b>Town bylaws</b><span class="what">The discharge bylaw of every municipality in BC, read by a person against its source.</span></div><div class="today"><strong>59</strong><span>of 160 municipalities verified<small>14 more are verified but wait on their zone maps.</small></span></div></li>
+<li><div><b>Regional districts</b><span class="what">Discharge bylaws for electoral areas, and regional parks whose bylaws ban discharge.</span></div><div class="today"><strong>10</strong><span>of 159 electoral areas verified<small>Most rely on provincial rules; each is read before it counts.</small></span></div></li>
+<li><div><b>Provincial parks</b><span class="what">BC's parks regulation bans discharge in parks, conservancies and recreation areas, except hunting in season.</span></div><div class="today"><strong>864</strong><span>parks, all mapped<small>Ecological reserves and protected areas answer Not confirmed.</small></span></div></li>
+<li><div><b>Recreation sites</b><span class="what">Firing on or into the developed part of a site isn't allowed, and that part isn't mapped.</span></div><div class="today"><strong>2,334</strong><span>sites, all mapped<small>Inside a site, the answer is Not confirmed.</small></span></div></li>
+<li><div><b>First Nations reserves</b><span class="what">The Nation's own bylaws apply on reserve land.</span></div><div class="today"><strong>1,602</strong><span>reserves, all mapped<small>Not confirmed, with a note to contact the Nation.</small></span></div></li>
+<li><div><b>Fire and evacuation orders</b><span class="what">BC Wildfire Service area restrictions and evacuation orders close the area. Fire bans are listed on the answer, exploding targets included.</span></div><div class="today"><strong>2 h</strong><span>refresh in fire season<small>An answer without a recent copy says Not confirmed.</small></span></div></li>
+<li><div><b>Rules that apply everywhere</b><span class="what">More than 100 m from any dwelling, school, church or occupied farm building, and never from a highway's road allowance.</span></div><div class="today"><strong>100 m</strong><span>and the road allowance, on every answer<small>Including No prohibition found.</small></span></div></li>
+</ul>
+<div class="arms" aria-label="Firearms you can pick"><b>Pick your firearm:</b><span>Rifle</span><span>Shotgun with shot</span><span>Shotgun with slugs</span><span>Handgun</span><span>Muzzleloader</span><span>Air gun, low power</span><span>Air gun, high power</span><span>Bow or crossbow</span></div>
+<p class="note">Restricted and prohibited firearms get their own answer anywhere outside an approved range: Prohibited, with the reason.</p>
+</div>
+</section>
+
+<section id="safety" class="sec">
+<div class="wrap">
+<div class="head">
+<span class="eyebrow">Safety</span>
 <h2>Safety comes with every answer</h2>
-<p>Knowing where shooting is allowed is half of it. Shootable puts the rest on the same screen, and says Not confirmed instead of guessing.</p>
+<p>Knowing whether a rule bans shooting is half of it. Shootable puts the rest on the same screen, and says Not confirmed instead of guessing.</p>
 </div>
-<div class="safe">
-<div><b>The rules that apply everywhere</b><span>Every answer lists them, even No prohibition found: more than 100 m from any dwelling, school, church or occupied farm building, and never from a highway's road allowance.</span></div>
-<div><b>Checked around your GPS accuracy</b><span>Near a boundary, Shootable checks a ring as wide as your GPS error. If any part of it falls where shooting is prohibited, the answer is Not confirmed, not a guess about which side you're on.</span></div>
-<div><b>Fire and evacuation orders</b><span>Wildfire area restrictions and evacuation orders close the area. They're refreshed every 2 hours in fire season, and an answer without a recent copy says so.</span></div>
-<div><b>Restricted firearms</b><span>Handguns and other restricted firearms get one answer anywhere outside an approved range: Prohibited, with the reason.</span></div>
-<div class="pro-tag"><b>Downrange check</b><span>Pro shows mapped buildings, roads, trails and property lines in your line of fire, out to your cartridge's danger distance. <a href="#downrange">See how it works</a>.</span></div>
-<div class="pro-tag"><b>Daylight, wind and fire danger</b><span>Pro adds the day's light, wind, lightning and fire danger for the spot, so you know before you drive out.</span></div>
-</div>
+<ul class="vs3">
+<li><i>Every answer</i><b>Checked around your GPS accuracy</b><span>Near a boundary, Shootable checks a ring as wide as your GPS error. If any part of it falls where shooting is prohibited, the answer is Not confirmed, not a guess about which side you're on.</span></li>
+<li><i>Pro</i><b>What's in your line of fire</b><span>The downrange check lists mapped buildings, roads, trails and property lines out to your cartridge's danger distance. <a href="#downrange">See how it works</a>.</span></li>
+<li><i>Pro</i><b>Daylight, wind and fire danger</b><span>The day's light, wind, lightning and fire danger for the spot, so you know before you drive out.</span></li>
+</ul>
 <p class="basics"><b>The basics still come first.</b> ACTS and PROVE from your firearms safety course, a safe backstop, a clear line of fire, and no shooting toward anything you can't see past.</p>
 </div>
 </section>
 
-<section id="downrange" class="scene dr">
+<section id="downrange" class="scene">
 <div class="wrap split">
 <div class="copy">
-<span class="eyebrow">Pro · safety</span>
+<span class="eyebrow">Pro · downrange</span>
 <h2>Know what's downrange before you shoot</h2>
 <p>A spot can be open to shooting and still be the wrong place to shoot toward. The downrange check shows what's mapped in your line of fire, out to the distance your cartridge can carry.</p>
 <ol class="steps">
@@ -427,9 +506,9 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <li><b>Point the way you'll shoot.</b>Turn the arc on the map, or face that way with your phone.</li>
 <li><b>See what's in the arc.</b>Buildings, roads, forest roads, trails and property lines, nearest first, each with its distance. Parks and closed areas in the arc are flagged too.</li>
 </ol>
-<p class="dr-note">Mapped features only. A tent, a vehicle or a person isn't on any map: confirm your target and what's beyond it every time.</p>
+<p class="limit">Mapped features only. A tent, a vehicle or a person isn't on any map: confirm your target and what's beyond it every time.</p>
 </div>
-<div class="media dr-media">
+<div class="media">
 <svg class="dr-svg" viewBox="0 0 640 560" role="img" aria-label="Downrange check: the arc a .22 LR can reach in the direction you'll shoot, about 1.5 km, with a forest road at 640 m, a trail at 900 m, a cabin at 1.1 km and a property line at 1.3 km inside it. A building off to the side is outside the arc.">
 <defs><clipPath id="drc"><rect width="640" height="560" rx="18"/></clipPath></defs>
 <g clip-path="url(#drc)">
@@ -442,12 +521,13 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <path d="M38 -26 Q189 72 341 170 T643 365" class="dr-prop"/>
 <line x1="150" y1="500" x2="370.0" y2="118.9" class="dr-axis"/>
 <circle cx="244" cy="337" r="5" class="dr-dot"/><circle cx="282" cy="271" r="5" class="dr-dot"/><circle cx="341" cy="170" r="5" class="dr-dot"/>
+<circle cx="301" cy="215" r="20" class="dr-halo"/>
 <rect x="292" y="206" width="18" height="18" rx="3" class="dr-bldg hit"/>
 <rect x="82" y="342" width="16" height="16" rx="3" class="dr-bldg"/>
-<g class="dr-tag " transform="translate(260 333)"><rect width="148" height="26" rx="6"/><text x="10" y="17">Forest road · 640 m</text></g>
-<g class="dr-tag " transform="translate(298 267)"><rect width="104" height="26" rx="6"/><text x="10" y="17">Trail · 900 m</text></g>
-<g class="dr-tag hot" transform="translate(171 202)"><rect width="112" height="26" rx="6" class="warn"/><text x="10" y="17">Cabin · 1.1 km</text></g>
-<g class="dr-tag " transform="translate(357 166)"><rect width="156" height="26" rx="6"/><text x="10" y="17">Property line · 1.3 km</text></g>
+<g class="dr-tag" transform="translate(260 333)"><rect width="148" height="26" rx="6"/><text x="10" y="17">Forest road · 640 m</text></g>
+<g class="dr-tag" transform="translate(298 267)"><rect width="104" height="26" rx="6"/><text x="10" y="17">Trail · 900 m</text></g>
+<g class="dr-tag hot" transform="translate(166 202)"><rect width="112" height="26" rx="6"/><text x="10" y="17">Cabin · 1.1 km</text></g>
+<g class="dr-tag" transform="translate(357 166)"><rect width="156" height="26" rx="6"/><text x="10" y="17">Property line · 1.3 km</text></g>
 <g class="dr-tag dim" transform="translate(32 310)"><rect width="118" height="24" rx="6"/><text x="9" y="16">Outside the arc</text></g>
 <circle cx="150" cy="500" r="11" class="dr-you"/><circle cx="150" cy="500" r="4" fill="#14120F"/>
 <text x="168" y="505" class="dr-youl">You</text>
@@ -458,56 +538,46 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <div class="dr-head"><b>In your line of fire</b><span>.22 LR · 1.5 km · bearing 30°</span></div>
 <div class="dr-row"><i></i><span>Forest road</span><em>640 m</em></div>
 <div class="dr-row"><i></i><span>Trail</span><em>900 m</em></div>
-<div class="dr-row warn"><i></i><span>Building (cabin)</span><em>1.1 km</em></div>
+<div class="dr-row hit"><i></i><span>Building (cabin)</span><em>1.1 km</em></div>
 <div class="dr-row"><i></i><span>Property line</span><em>1.3 km</em></div>
 </div>
+<p class="illus">Illustration with invented data.</p>
 </div>
 </div>
 </section>
 
-<section id="lanes" class="scene dr">
-<div class="wrap split">
-<div class="copy">
+<section id="lanes" class="lanes light sec">
+<div class="wrap">
+<div class="head">
 <span class="eyebrow">Pro · longer shots</span>
 <h2>Find a lane, not just a spot</h2>
 <p>Past 300 m the question changes from "may I shoot here?" to "where can I shoot from here?". The lane finder works outward from the spot you're standing on and shows the bearings worth walking.</p>
-<ol class="steps">
-<li><b>Pick your distance band.</b>100 to 300 m, 300 to 600 m, out to 1,500 m.</li>
-<li><b>See the lanes.</b>Bearings where the ground-level line of sight reaches a target in your band, the ground rises behind it, and nothing mapped sits in the fan past it. Bearings with a building, park or closed area in the fan are left out.</li>
-<li><b>Keep the lane.</b>A lane card holds the targets, bearings, ground profile and your parking spot, with the date it was checked. It stays on your phone.</li>
-</ol>
-<p class="dr-note">Mapped terrain and features only. Walk the lane, confirm the backstop and what's beyond it.</p>
 </div>
-<div class="media dr-media">
-<svg class="dr-svg" viewBox="0 0 640 560" role="img" aria-label="Lane finder: two lanes from the firing point, at 22 degrees out to 600 metres and at 58 degrees out to 520 metres, with targets marked along each, and a third bearing removed because a building sits in its fan.">
+<div class="lane-media">
+<div class="lane-map">
+<svg class="dr-svg" viewBox="0 0 640 560" role="img" aria-label="Lane finder: two lanes from the firing point, at 22 degrees out to 600 metres and at 58 degrees out to 520 metres, with targets marked along each, and a third bearing left out because a building sits in its fan.">
 <defs><clipPath id="lnc"><rect width="640" height="560" rx="18"/></clipPath></defs>
 <g clip-path="url(#lnc)">
 <rect width="640" height="560" fill="#22201B"/>
 <image href="img/contours.svg" x="-260" y="-60" width="1300" height="700" opacity=".55"/>
-<circle cx="110" cy="500" r="186.0" class="dr-ring"/>
-<circle cx="110" cy="500" r="372.0" class="dr-ring"/>
-<circle cx="110" cy="500" r="558.0" class="dr-ring"/>
+<circle cx="110" cy="500" r="186.0" class="dr-ring"/><circle cx="110" cy="500" r="372.0" class="dr-ring"/><circle cx="110" cy="500" r="558.0" class="dr-ring"/>
 <path d="M110.0,500.0 L218.8,144.3 A372.0,372.0 0 0 1 278.9,168.5 L110.0,500.0 Z" class="ln-fan"/>
 <line x1="110" y1="500" x2="249.4" y2="155.1" class="dr-axis"/>
-<circle cx="214.5" cy="241.3" r="4.5" class="ln-tgt"/>
-<circle cx="226.1" cy="212.6" r="4.5" class="ln-tgt"/>
-<circle cx="237.7" cy="183.8" r="4.5" class="ln-tgt"/>
-<circle cx="249.4" cy="155.1" r="4.5" class="ln-tgt"/>
+<circle cx="214.5" cy="241.3" r="4.5" class="ln-tgt"/><circle cx="226.1" cy="212.6" r="4.5" class="ln-tgt"/><circle cx="237.7" cy="183.8" r="4.5" class="ln-tgt"/><circle cx="249.4" cy="155.1" r="4.5" class="ln-tgt"/>
 <path d="M110.0,500.0 L367.5,306.0 A322.4,322.4 0 0 1 397.3,353.6 L110.0,500.0 Z" class="ln-fan"/>
 <line x1="110" y1="500" x2="383.4" y2="329.2" class="dr-axis"/>
-<circle cx="267.7" cy="401.4" r="4.5" class="ln-tgt"/>
-<circle cx="294.0" cy="385.0" r="4.5" class="ln-tgt"/>
-<circle cx="320.3" cy="368.6" r="4.5" class="ln-tgt"/>
-<circle cx="346.6" cy="352.2" r="4.5" class="ln-tgt"/>
-<circle cx="372.9" cy="335.7" r="4.5" class="ln-tgt"/>
+<circle cx="267.7" cy="401.4" r="4.5" class="ln-tgt"/><circle cx="294.0" cy="385.0" r="4.5" class="ln-tgt"/><circle cx="320.3" cy="368.6" r="4.5" class="ln-tgt"/><circle cx="346.6" cy="352.2" r="4.5" class="ln-tgt"/><circle cx="372.9" cy="335.7" r="4.5" class="ln-tgt"/>
 <path d="M110.0,500.0 L667.2,470.8 A558.0,558.0 0 0 1 663.8,568.0 L110.0,500.0 Z" class="ln-no"/>
+<circle cx="581" cy="516" r="20" class="dr-halo"/>
 <rect x="572" y="507" width="18" height="18" rx="3" class="dr-bldg hit"/>
 <circle cx="110" cy="500" r="11" class="dr-you"/><circle cx="110" cy="500" r="4" fill="#14120F"/><text x="126" y="522" class="dr-youl">You</text>
-<g class="dr-tag " transform="translate(209 115)"><rect width="190" height="26" rx="6"/><text x="10" y="17">Lane 1 · 22° · to 600 m</text></g>
-<g class="dr-tag " transform="translate(391 295)"><rect width="190" height="26" rx="6"/><text x="10" y="17">Lane 2 · 58° · to 520 m</text></g>
-<g class="dr-tag hot" transform="translate(431 464)"><rect width="150" height="26" rx="6" class="warn"/><text x="10" y="17">Building in the fan</text></g>
+<g class="dr-tag" transform="translate(209 115)"><rect width="190" height="26" rx="6"/><text x="10" y="17">Lane 1 · 22° · to 600 m</text></g>
+<g class="dr-tag" transform="translate(391 295)"><rect width="190" height="26" rx="6"/><text x="10" y="17">Lane 2 · 58° · to 520 m</text></g>
+<g class="dr-tag hot" transform="translate(402 464)"><rect width="178" height="26" rx="6"/><text x="10" y="17">Left out: building in fan</text></g>
 <text x="113" y="308" class="dr-km">300 m</text><text x="113" y="122" class="dr-km">600 m</text>
 </g></svg>
+</div>
+<div class="lane-side">
 <svg class="dr-svg" viewBox="0 0 640 170" role="img" aria-label="Example lane profile: level ground from the firing point to a target at 600 metres, with the ground rising behind it as a backstop."><rect width="640" height="170" rx="18" fill="#22201B"/>
 <path d="M0,120 L60,118 L180,122 L300,116 L430,118 L520,110 L560,84 L600,52 L640,40 L640,170 L0,170 Z" class="ln-ground"/>
 <path d="M0,120 L60,118 L180,122 L300,116 L430,118 L520,110 L560,84 L600,52 L640,40" class="ln-line"/>
@@ -516,47 +586,74 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <g class="dr-tag" transform="translate(30 22)"><rect width="104" height="26" rx="6"/><text x="10" y="17">Firing point</text></g>
 <g class="dr-tag" transform="translate(396 22)"><rect width="104" height="26" rx="6"/><text x="10" y="17">Target · 600 m</text></g>
 <g class="dr-tag" transform="translate(500 132)"><rect width="128" height="26" rx="6"/><text x="10" y="17">Backstop · steep</text></g></svg>
-<p class="fine" style="font-size:14px;color:var(--dim);margin:0">Illustration with invented data.</p>
+<div class="dr-list" aria-label="Example lane card">
+<div class="dr-head"><b>Lane 1 · 22°</b><span>300–600 m · checked Nov 4</span></div>
+<div class="dr-row"><i></i><span>Target 300 m</span><em>+2 m · backstop good</em></div>
+<div class="dr-row"><i></i><span>Target 450 m</span><em>+4 m · backstop good</em></div>
+<div class="dr-row"><i></i><span>Target 600 m</span><em>+6 m · backstop steep</em></div>
+<div class="dr-row"><i></i><span>Parking</span><em>saved from GPS</em></div>
 </div>
+<p class="illus">Illustration with invented data.</p>
+</div>
+</div>
+<ol class="steps steps3">
+<li><b>Pick your distance band.</b>100 to 300 m, 300 to 600 m, out to 1,500 m.</li>
+<li><b>See the lanes.</b>Bearings where the ground-level line of sight reaches a target in your band, the ground rises behind it, and nothing mapped sits in the fan past it. Bearings with a building, park or closed area in the fan are left out.</li>
+<li><b>Keep the lane.</b>A lane card holds the targets, bearings, ground profile and your parking spot, with the date it was checked. It stays on your phone.</li>
+</ol>
+<p class="limit" style="margin-top:28px">Mapped terrain and features only. Walk the lane, confirm the backstop and what's beyond it.</p>
 </div>
 </section>
 
-<section id="pro">
-<div class="pro-head">
+<section id="pro" class="pro">
 <img class="topo" src="img/contours.svg" alt="" aria-hidden="true" loading="lazy">
-<div class="wrap"><h2>Pro: plan the day, check downrange, work without signal</h2></div>
+<div class="wrap">
+<div class="pro-top">
+<div>
+<span class="eyebrow">Shootable Pro</span>
+<h2>Pro is for the trip</h2>
+<p>Checking a spot is always free, and so is anything that changes the answer. Pro adds what you need away from home: rules that work with no signal, a heads-up when something changes near your spots, and a check of what's beyond your target.</p>
 </div>
-<div class="pro">
-<div class="wrap" style="display:grid;gap:28px;padding-top:40px">
-<p style="max-width:720px">The answer is always free, and so is anything that changes it. Pro is for the trip: saving a region for no signal, knowing when the rules change, and checking what's beyond your target.</p>
-<ul class="feats">
-<li><b>Offline regions</b><span>Save a region at home and every rule layer works with no signal.</span></li>
-<li><b>Rule-change alerts</b><span>Closed-area amendments, bylaw changes and fire orders near your saved spots, and a re-check of every saved spot when the data changes: a new mapped building in your fan, a lost verification, a closure.</span></li>
-<li><b>Downrange check</b><span>Mapped buildings, roads, trails and property lines inside your firearm's danger distance. Mapped features only: confirm your target and what's beyond it.</span></li>
-<li><b>Plan an area</b><span>Check a forest road or a whole area before you drive out, not one pin at a time.</span></li>
-<li><b>Private saved spots</b><span>As many as you like, kept on your phone. Never shared, ranked or put on a map for anyone else.</span></li>
-<li><b>Conditions and wind window</b><span>Wind, rain, lightning, daylight and the day's fire danger for the spot, plus the hours when the crosswind on your lane is low and the sun isn't in your scope.</span></li>
-<li><b>Drive there</b><span>Offline directions on mapped forest roads to a saved spot, by road name, with km boards and radio channels where they're published.</span></li>
-</ul>
-<h3 style="margin:8px 0 0">For longer shots</h3>
-<p style="max-width:720px">For shooting past 300 m on Crown land. All of it is part of Pro.</p>
-<ul class="feats">
-<li><b>Lane finder</b><span>From your spot, the bearings with ground-level line of sight to a target in your distance band, rising ground behind it, and nothing mapped in the fan past it. Computed from terrain and mapped features only.</span></li>
-<li><b>Lane cards</b><span>A saved lane with ranged targets, azimuths, the ground profile, your parking spot and a dated check, kept on your phone and shared only when you choose.</span></li>
-<li><b>Offline imagery</b><span>This season's satellite imagery saved with a region, so a cutblock or gravel pit looks the way it does now.</span></li>
-</ul>
-<div class="price">
-<div class="plan"><b>CA$24.99 a year</b><span>14 days free, then billed yearly</span></div>
-<div class="plan"><b>CA$4.99 a month</b><span>For one trip or fire season. Cancel anytime</span></div>
+<div class="alerts" aria-label="Example Pro alerts">
+<div class="alert"><svg aria-hidden="true"><use href="#logo"/></svg><div class="t"><span>Shootable</span><span>7:42 am</span></div><b>Fire order near a saved spot</b><span>An area restriction now covers "Ridge above the creek". It answers Prohibited until the order ends.</span></div>
+<div class="alert"><svg aria-hidden="true"><use href="#logo"/></svg><div class="t"><span>Shootable</span><span>Yesterday</span></div><b>2 saved spots re-checked</b><span>A town's bylaw map near you was verified. "Lane 2" now answers No prohibition found.</span></div>
+<div class="alert"><svg aria-hidden="true"><use href="#logo"/></svg><div class="t"><span>Shootable</span><span>Sat</span></div><b>Wind window for Lane 2</b><span>Crosswind under 2.5 m/s from 9 to 11 am, sun behind you.</span></div>
+<p class="illus">Illustration with invented data.</p>
 </div>
-<p style="font-size:15px;color:var(--dim)">Subscriptions are billed through Google Play or the App Store and renew until you cancel.</p>
 </div>
+<div class="groups">
+<div><h3>Without signal</h3><ul>
+<li><b>Offline regions</b>Save a region at home and every rule layer, the map and the terrain work with no signal.</li>
+<li><b>Offline imagery</b>This season's satellite imagery saved with the region, so a cutblock or gravel pit looks the way it does now.</li>
+<li><b>Drive there</b>Directions on mapped forest roads to a saved spot, by road name, with km boards and radio channels where they're published.</li>
+</ul></div>
+<div><h3>Before you go</h3><ul>
+<li><b>Plan an area</b>Check a forest road or a whole area before you drive out, not one pin at a time.</li>
+<li><b>Conditions and wind window</b>Wind, rain, lightning, daylight and fire danger for the spot, and the hours when the crosswind on your lane is low.</li>
+</ul></div>
+<div><h3>Stay current</h3><ul>
+<li><b>Rule-change alerts</b>Closed-area amendments, bylaw changes and fire orders near your saved spots.</li>
+<li><b>Private saved spots</b>As many as you like, re-checked when the data changes. Kept on your phone, never shared or ranked.</li>
+</ul></div>
+<div><h3>Shoot farther, safely</h3><ul>
+<li><b>Downrange check</b>What's mapped in your line of fire, out to your cartridge's danger distance. <a href="#downrange">How it works</a></li>
+<li><b>Lane finder</b>Bearings with line of sight, a rising backstop and nothing mapped in the fan. <a href="#lanes">How it works</a></li>
+<li><b>Lane cards</b>Targets, azimuths, ground profile and parking, with a dated check.</li>
+</ul></div>
+</div>
+<div class="buy">
+<div class="plan best"><em>Best value · 14 days free</em><b>CA$24.99<small> a year</small></b><span>About CA$2 a month, billed yearly after the free trial.</span></div>
+<div class="plan"><em>Monthly</em><b>CA$4.99<small> a month</small></b><span>For one trip or a fire season. Cancel anytime.</span></div>
+<div class="go"><a class="btn primary" href="#early-access" data-early>Get early access</a><p>We'll email you once when it's on your phone.</p></div>
+</div>
+<p class="free">Subscriptions are billed through Google Play or the App Store and renew until you cancel.</p>
 </div>
 </section>
 
 <section id="privacy" class="sec">
 <div class="wrap priv">
 <div class="head" style="margin:0">
+<span class="eyebrow">Privacy</span>
 <h2>Where shooting may be allowed. Never where people go.</h2>
 <p>Shootable answers questions about places, not people. There are no popular spots, no heat maps and nothing ranked.</p>
 </div>
@@ -568,12 +665,33 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </div>
 </section>
 
-<section class="final">
+<section class="final" id="join">
 <img class="topo" src="img/contours.svg" alt="" aria-hidden="true" loading="lazy">
 <div class="wrap">
+<div class="say">
 <h2>Check the spot before you set up</h2>
-<p>Check it from home, and again when you get there. The answer is free. More questions? Read the <a href="faq/" style="color:#fff">FAQ</a>.</p>
-<div class="ctas"><a class="btn primary" href="#early-access" data-early>Get early access</a></div>
+<p>Check it from home, and again when you get there. The answer is free. More questions? Read the <a href="faq/">FAQ</a>.</p>
+</div>
+<div class="slot" id="eaHome">
+<form class="ea-form" name="early-access" method="POST" data-netlify="true" netlify-honeypot="company" id="eaForm">
+<input type="hidden" name="form-name" value="early-access">
+<div class="ea-top"><h3 id="eaTitle">Get Shootable early</h3><button class="ea-x" type="button" data-close aria-label="Close"><svg width="20" height="20" aria-hidden="true"><use href="#x"/></svg></button></div>
+<p>We'll email you once when Shootable is ready on your phone, and invite early sign-ups to test it before launch.</p>
+<label>Email<input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@example.com"></label>
+<fieldset><legend>Your phone</legend><div class="opts">
+<label class="opt"><input type="radio" name="phone" value="Android" checked><span>Android</span></label>
+<label class="opt"><input type="radio" name="phone" value="iPhone"><span>iPhone</span></label>
+</div></fieldset>
+<p class="hp" aria-hidden="true"><label>Company<input name="company" tabindex="-1" autocomplete="off"></label></p>
+<p class="ea-err" id="eaErr" role="alert" hidden></p>
+<button class="btn dark" type="submit" id="eaGo">Join the list</button>
+<p class="ea-fine">Only launch news, never shared or sold. Unsubscribe from any email, or ask us to delete your address.</p>
+</form>
+<div class="ea-done" id="eaDone" hidden tabindex="-1">
+<div class="ea-top"><h3>You're on the list</h3><button class="ea-x" type="button" data-close aria-label="Close"><svg width="20" height="20" aria-hidden="true"><use href="#x"/></svg></button></div>
+<p>Thanks. We'll email you when Shootable is ready on <b id="eaPhone">Android</b>.</p>
+</div>
+</div>
 </div>
 </section>
 
@@ -589,43 +707,29 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </div>
 <div class="wrap small">
 <span>Shootable is made by 10ten Studio Inc. It is not a government app and is not affiliated with the Government of British Columbia. It's a guide built from public regulations, bylaws and open data, not a lawyer's opinion. The official regulations and bylaws govern.</span>
-<span>Contains information licensed under the Open Government Licence – British Columbia.</span>
+<span>App screens: map data © OpenStreetMap contributors (ODbL) via Protomaps; terrain from Copernicus DEM GLO-30 © DLR, Airbus (ESA/EU). Contours: BC TRIM. Contains information licensed under the Open Government Licence – British Columbia.</span>
 </div>
 </footer>
 
-<dialog class="ea" id="early-access" aria-labelledby="eaTitle">
-<form name="early-access" method="POST" data-netlify="true" netlify-honeypot="company" id="eaForm">
-<input type="hidden" name="form-name" value="early-access">
-<div class="top"><h2 id="eaTitle">Get Shootable early</h2><button class="x" type="button" data-close aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-<p>We'll email you once when Shootable is ready on your phone, and invite early sign-ups to test it before launch.</p>
-<label>Email<input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@example.com"></label>
-<fieldset><legend>Your phone</legend><div class="opts">
-<label class="opt"><input type="radio" name="phone" value="Android" checked><span>Android</span></label>
-<label class="opt"><input type="radio" name="phone" value="iPhone"><span>iPhone</span></label>
-</div></fieldset>
-<p class="hp" aria-hidden="true"><label>Company<input name="company" tabindex="-1" autocomplete="off"></label></p>
-<p class="err" id="eaErr" role="alert" hidden></p>
-<button class="btn primary" type="submit" id="eaGo">Join the list</button>
-<p class="fine">Only launch news, never shared or sold. Unsubscribe from any email, or ask us to delete your address.</p>
-</form>
-<div class="done" id="eaDone" hidden tabindex="-1">
-<div class="top"><h2>You're on the list</h2><button class="x" type="button" data-close aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-<p>Thanks. We'll email you when Shootable is ready on <b id="eaPhone">Android</b>.</p>
-<button class="btn primary" type="button" data-close>Back to the page</button>
-</div>
-</dialog>
+<dialog class="ea" id="early-access" aria-labelledby="eaTitle"></dialog>
 
 <script>
-// Early access: a Netlify form (no backend of our own yet). Posted with fetch so the page stays put.
+// Early access: one Netlify form (no backend of our own yet), shown in the closing section. Buttons elsewhere move the
+// same form into a dialog and back, so Netlify sees one form and the page never has two to keep in step.
 (() => {
-  const d = document.getElementById('early-access'), f = document.getElementById('eaForm'), err = document.getElementById('eaErr'), go = document.getElementById('eaGo');
-  if (!d || !d.showModal) return;
-  document.querySelectorAll('[data-early]').forEach(a => a.addEventListener('click', (e) => {
-    e.preventDefault(); f.hidden = false; document.getElementById('eaDone').hidden = true; err.hidden = true;
-    d.showModal(); setTimeout(() => f.email.focus(), 30);
-  }));
-  d.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => d.close()));
-  d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
+  const d = document.getElementById('early-access'), home = document.getElementById('eaHome');
+  const f = document.getElementById('eaForm'), done = document.getElementById('eaDone'), err = document.getElementById('eaErr'), go = document.getElementById('eaGo');
+  const reset = () => { f.hidden = false; done.hidden = true; err.hidden = true; };
+  if (d && d.showModal) {
+    document.querySelectorAll('[data-early]').forEach(a => a.addEventListener('click', (e) => {
+      e.preventDefault(); reset(); d.append(f, done); d.showModal(); setTimeout(() => f.email.focus(), 30);
+    }));
+    d.addEventListener('close', () => { home.append(f, done); });
+    d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
+    document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => d.close()));
+  } else { // no <dialog>: the buttons just scroll to the form
+    document.querySelectorAll('[data-early]').forEach(a => { a.href = '#join'; });
+  }
   f.addEventListener('submit', async (e) => {
     e.preventDefault(); err.hidden = true;
     f.email.value = f.email.value.trim();
@@ -635,7 +739,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
       const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(f)).toString() });
       if (!r.ok) throw new Error(r.status);
       document.getElementById('eaPhone').textContent = f.phone.value;
-      f.hidden = true; const done = document.getElementById('eaDone'); done.hidden = false; done.focus(); f.reset();
+      f.hidden = true; done.hidden = false; done.focus(); f.reset();
     } catch {
       err.textContent = "That didn't go through. Check your connection and try again, or email hello@10tenStudio.com.";
       err.hidden = false;
@@ -643,6 +747,16 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
   });
   if (location.hash === '#early-access') document.querySelector('[data-early]').click();
 })();
+// The map section on phones: one screen at a time, switched by firearm.
+document.querySelectorAll('.toggle button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.toggle button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  document.querySelectorAll('.pair figure').forEach(fig => fig.classList.toggle('on', fig.dataset.fig === b.dataset.show));
+}));
+// Phones: the header's sign-up button shows once the hero's own button is out of view.
+(() => { const b = document.querySelector('.hero .ctas .btn'); if (!b || !('IntersectionObserver' in window)) return document.documentElement.classList.add('scrolled');
+  new IntersectionObserver(([e]) => document.documentElement.classList.toggle('scrolled', !e.isIntersecting)).observe(b); })();
+// Close the phone menu after a jump.
+document.querySelectorAll('.menu a').forEach(a => a.addEventListener('click', () => a.closest('details').open = false));
 </script>
 </body>
 </html>
