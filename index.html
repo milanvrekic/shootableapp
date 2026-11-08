@@ -51,9 +51,10 @@ p{margin:0;text-wrap:pretty}
 
 /* hero: the app's own screen, large and bleeding off the bottom edge, beside one line of what it does */
 .hero{position:relative;color:#fff;display:flex;flex-direction:column;overflow:hidden;background:radial-gradient(120% 90% at 78% 40%,#2A2722 0%,#1B1915 55%,#14120F 100%)}
-.hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(20,18,15,.92) 0%,rgba(20,18,15,.6) 45%,rgba(20,18,15,.15) 75%)}
+.hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(20,18,15,.94) 0%,rgba(20,18,15,.78) 42%,rgba(20,18,15,.35) 70%,rgba(20,18,15,.2) 100%),linear-gradient(0deg,rgba(20,18,15,.6) 0%,rgba(20,18,15,0) 30%)}
 .hero>*{position:relative;z-index:2}
-.hero>.topo{position:absolute;z-index:0;opacity:.85}
+.hero picture{position:absolute;inset:0;z-index:0}
+.hero .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:70% 55%;display:block}
 .hero>.wrap{width:100%}
 .hero>.wrap:first-of-type{z-index:5}
 .nav{display:flex;align-items:center;gap:24px;padding:20px 0}
@@ -241,6 +242,10 @@ section{scroll-margin-top:12px}
    Free is shown as a plan too, so the line between them is plain: the answer is free, Pro is for the trip. */
 .pro{background:var(--bark);color:#fff;position:relative;overflow:hidden}
 .pro .topo{opacity:.35}
+.pro-photo{position:absolute;top:0;left:0;right:0;height:min(620px,62vw);z-index:1}
+.pro-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 45%;display:block}
+.pro-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,25,21,.1) 0%,rgba(27,25,21,.35) 45%,var(--bark) 100%),linear-gradient(90deg,rgba(27,25,21,.55) 0%,rgba(27,25,21,0) 60%)}
+.pro>.wrap{padding-top:min(400px,40vw)!important}
 .pro>.wrap{position:relative;z-index:2;padding-top:112px;padding-bottom:112px}
 .pro-head{max-width:860px;margin-bottom:56px}
 .pro-head h2{font-size:clamp(46px,6.4vw,84px);line-height:.92}
@@ -386,7 +391,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </defs></svg>
 
 <header class="hero" id="top">
-<img class="topo" src="img/contours.svg" alt="" aria-hidden="true">
+<picture><source type="image/webp" srcset="img/photo/prone-berm-1000.webp 1000w, img/photo/prone-berm-2000.webp 2000w" sizes="100vw"><img class="photo" src="img/photo/prone-berm-2000.jpg" srcset="img/photo/prone-berm-1000.jpg 1000w, img/photo/prone-berm-2000.jpg 2000w" sizes="100vw" alt="A shooter lying prone behind a scoped rifle on a bipod, with a grassy earth berm rising behind the target line." fetchpriority="high"></picture>
 <div class="wrap">
 <div class="nav">
 <a class="mark" href="#top" aria-label="Shootable, back to top"><svg aria-hidden="true"><use href="#logo"/></svg>Shootable</a>
@@ -645,6 +650,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 
 <section id="pro" class="pro">
 <img class="topo" src="img/contours.svg" alt="" aria-hidden="true" loading="lazy">
+<div class="pro-photo"><picture><source type="image/webp" srcset="img/photo/sunset-targets-1000.webp 1000w, img/photo/sunset-targets-2000.webp 2000w" sizes="100vw"><img src="img/photo/sunset-targets-2000.jpg" srcset="img/photo/sunset-targets-1000.jpg 1000w, img/photo/sunset-targets-2000.jpg 2000w" sizes="100vw" alt="Sunset over an open field with paper targets on wooden stands and a rifle on a bipod in the foreground." loading="lazy"></picture></div>
 <div class="wrap">
 <div class="pro-head">
 <span class="eyebrow">Shootable Pro</span>
@@ -733,7 +739,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <div class="wrap small">
 <span class="sibs">Also by 10ten Studio: <a href="https://gethuntable.app">Huntable</a><a href="https://getfishable.app">Fishable</a><a href="https://getcampable.app">Campable</a><a href="https://getpickable.app">Pickable</a></span>
 <span>Shootable is made by 10ten Studio Inc. It is not a government app and is not affiliated with the Government of British Columbia. It's a guide built from public regulations, bylaws and open data, not a lawyer's opinion. The official regulations and bylaws govern.</span>
-<span>App screens: map data © OpenStreetMap contributors (ODbL) via Protomaps; terrain from Copernicus DEM GLO-30 © DLR, Airbus (ESA/EU). Contours: BC TRIM. Contains information licensed under the Open Government Licence – British Columbia.</span>
+<span>App screens: map data © OpenStreetMap contributors (ODbL) via Protomaps; terrain from Copernicus DEM GLO-30 © DLR, Airbus (ESA/EU). Contours: BC TRIM. Photos by Artem Kniaz on <a href="https://unsplash.com/@artkniaz" target="_blank" rel="noopener">Unsplash</a>. Contains information licensed under the Open Government Licence – British Columbia.</span>
 </div>
 </footer>
 
