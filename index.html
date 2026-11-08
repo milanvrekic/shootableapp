@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Shootable: check any spot in BC before you shoot</title>
+<title>Shootable: can I shoot here, right now?</title>
 <meta name="description" content="Tap a spot on BC Crown land and pick your firearm. Shootable tells you whether a rule we check bans shooting there today, names the rule, and shades the map around you.">
-<meta property="og:title" content="Shootable: check any spot in BC before you shoot">
+<meta property="og:title" content="Shootable: can I shoot here, right now?">
 <meta property="og:description" content="Closed areas, town bylaws, parks, reserves and fire orders, checked for the spot and firearm you pick. Every answer shows its source.">
 <meta property="og:url" content="https://getshootable.app/">
 <meta name="twitter:card" content="summary_large_image">
@@ -72,18 +72,35 @@ p{margin:0;text-wrap:pretty}
 .menu nav{position:absolute;right:0;top:52px;z-index:10;background:var(--field);border-radius:16px;padding:8px;display:grid;min-width:220px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
 .menu nav a{color:var(--ink);text-decoration:none;font-weight:600;padding:12px 14px;border-radius:10px}
 .menu nav a:hover{background:var(--field2)}
-.hero-body{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:start;padding-top:40px}
-.hero-copy{max-width:600px;display:flex;flex-direction:column;gap:24px;padding-bottom:72px;padding-top:24px}
+.hero-body{display:grid;grid-template-columns:minmax(0,600px) minmax(0,450px);justify-content:space-between;column-gap:48px;align-items:center;padding-top:56px;padding-bottom:84px}
+.hero-copy{display:contents}
+.hero-copy>*{grid-column:1}
+.hero-copy>*+*{margin-top:24px}
+.hero-copy>.pin{grid-column:2;grid-row:1/span 5;margin-top:0;align-self:center}
 .hero h1{font-size:clamp(50px,7vw,96px);line-height:.88}
 .hero .kicker{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:-8px}
 .hero .lede{font-size:21px;line-height:1.5;color:var(--soft);max-width:540px}
 .hero .fine{font-size:15px;color:var(--dim);max-width:520px}
 .ctas{display:flex;gap:14px;flex-wrap:wrap}
-.hero-shot{width:400px;margin-right:max(0px,calc((100vw - 1200px)/2 - 24px));margin-bottom:-156px;display:flex;flex-direction:column;align-items:center}
-.hero-shot .phone{max-width:400px}
-.hero-cap{display:flex;gap:10px;align-items:center;font-size:14px;line-height:1.45;color:var(--dim);padding:0 0 22px;margin:0;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}
-.hero-cap b{color:var(--soft);font-weight:600}
-.hero-cap svg{flex:none;color:var(--brand);margin-top:2px}
+/* hero example: the family's tappable answer card (Huntable, Fishable). Spots and firearms are real cases from the
+   BC pack; the card says Example and the caption says your answer depends on your spot, firearm and date. */
+.pin{display:flex;flex-direction:column;gap:12px}
+.verdict{position:relative;border-radius:18px;padding:16px 18px 16px 16px;display:grid;grid-template-columns:46px minmax(0,1fr);gap:14px;align-items:start;color:#fff;box-shadow:0 18px 40px rgba(0,0,0,.45);min-height:156px}
+.verdict.s-unsure{color:var(--ink)}
+.verdict .badge{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-top:4px}
+.verdict.s-unsure .badge{background:rgba(0,0,0,.12)}
+.verdict .word{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;line-height:.92;text-transform:uppercase;padding-right:70px}
+.verdict .why{font-size:15.5px;font-weight:500;margin-top:6px;line-height:1.38}
+.verdict .where{font-size:13.5px;margin-top:8px;opacity:.95;display:flex;gap:6px;align-items:flex-start}
+.verdict .where svg{flex:none;margin-top:2px}
+.demo-tag{position:absolute;top:12px;right:12px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,.3);color:#fff;border-radius:999px;padding:3px 9px}
+.pin .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pin .row>span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-right:4px}
+.pin button{font:600 15px 'IBM Plex Sans',sans-serif;min-height:44px;padding:0 15px;border-radius:999px;border:1.5px solid rgba(255,255,255,.45);background:rgba(20,18,15,.55);color:#fff;cursor:pointer}
+.pin button:hover{border-color:#fff}
+.pin button[aria-pressed=true]{background:#fff;color:var(--bark);border-color:#fff}
+.pin .cap{font-size:13.5px;color:var(--dim);line-height:1.45}
+.pro-tag{display:inline-block;vertical-align:middle;font:700 12px 'IBM Plex Sans',sans-serif;letter-spacing:.08em;background:var(--brand);color:var(--bark);border-radius:6px;padding:3px 7px;margin-right:8px;position:relative;top:-1px}
 
 /* the three answers: each has its own colour AND pattern, so they read in glare and with colour blindness */
 .s-no{background-color:var(--no);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.13) 0 10px,transparent 10px 20px)}
@@ -157,6 +174,12 @@ section{scroll-margin-top:12px}
 .arms span{background:#fff;border-radius:6px;padding:5px 10px;font-weight:500;font-size:15px;color:var(--muted)}
 
 .basics{margin-top:24px;font-size:17px;max-width:780px}
+.safe{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:72px;align-items:start}
+.safe .head{margin-bottom:28px}
+.safe .vs3{grid-template-columns:minmax(0,1fr);gap:22px}
+.safe figure{margin:0;display:flex;flex-direction:column;gap:14px}
+.safe figcaption{font-size:14px;color:var(--muted);line-height:1.45}
+.safe figcaption b{color:var(--ink)}
 
 /* downrange (dark) and lanes (light): the tool's picture beside three steps */
 .scene{position:relative;color:#fff;background:var(--bark);overflow:hidden}
@@ -214,14 +237,21 @@ section{scroll-margin-top:12px}
 .dr-row.hit span{font-weight:600}
 .dr-row em{font-style:normal;font-variant-numeric:tabular-nums;color:var(--muted)}
 
-/* Pro: one picture of what it does for you (alerts), then the features grouped by when you'd use them, then a choice of plan */
+/* Pro, as on the sibling pages: "Pro: <what it does>", the benefits with icons beside the alerts it sends, then the plans.
+   Free is shown as a plan too, so the line between them is plain: the answer is free, Pro is for the trip. */
 .pro{background:var(--bark);color:#fff;position:relative;overflow:hidden}
 .pro .topo{opacity:.35}
 .pro>.wrap{position:relative;z-index:2;padding-top:112px;padding-bottom:112px}
-.pro-top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:56px;align-items:center;margin-bottom:64px}
-.pro-top h2{font-size:clamp(46px,6vw,78px);line-height:.94;margin-top:10px}
-.pro-top p{color:var(--soft);font-size:19px;margin-top:18px;max-width:560px}
-.alerts{display:grid;gap:10px}
+.pro-head{max-width:860px;margin-bottom:56px}
+.pro-head h2{font-size:clamp(46px,6.4vw,84px);line-height:.92}
+.pro-head p{color:var(--soft);font-size:20px;margin-top:20px;max-width:640px}
+.pro-top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:64px;align-items:start}
+.gains{list-style:none;margin:0;padding:0;display:grid;gap:26px}
+.gains li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px 16px;font-size:16.5px;color:var(--dim);line-height:1.5}
+.gains .ic{grid-row:span 2;width:44px;height:44px;border-radius:12px;background:rgba(143,203,174,.14);color:var(--brand);display:flex;align-items:center;justify-content:center}
+.gains b{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;line-height:1.05;text-transform:uppercase}
+.gains a{color:var(--brand)}
+.alerts{display:grid;gap:10px;position:sticky;top:24px}
 .alert{display:grid;grid-template-columns:36px minmax(0,1fr);gap:4px 12px;background:rgba(245,246,243,.96);color:var(--ink);border-radius:18px;padding:14px 16px;box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .alert:nth-child(2){margin-left:24px}.alert:nth-child(3){margin-left:48px;opacity:.92}
 .alert svg{grid-row:span 3;width:36px;height:36px;border-radius:9px}
@@ -229,21 +259,18 @@ section{scroll-margin-top:12px}
 .alert b{font-size:16px;line-height:1.3}
 .alert span{font-size:14.5px;color:var(--muted);line-height:1.4}
 .alerts p.illus{margin:6px 0 0 48px;color:var(--dim);font-size:13.5px}
-.groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}
-.groups h3{font-size:26px;line-height:1;padding-bottom:12px;border-bottom:2px solid var(--brand);margin-bottom:6px}
-.groups ul{margin:0;padding:0;list-style:none;display:grid}
-.groups li{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.14);font-size:15.5px;color:var(--dim);line-height:1.45}
-.groups li b{display:block;color:#fff;font-weight:600;font-size:16.5px;margin-bottom:2px}
-.groups a{color:var(--brand)}
-.buy{margin-top:72px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:16px;align-items:stretch}
-.plan{border-radius:18px;padding:22px 24px;display:grid;gap:4px;align-content:start;border:2px solid rgba(255,255,255,.22)}
-.plan.best{border-color:var(--brand);background:rgba(143,203,174,.08)}
+.buy{margin-top:72px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.plan{border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.16)}
+.plan.best{border-color:var(--brand);background:rgba(143,203,174,.1)}
 .plan em{font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:15px;color:var(--brand)}
+.plan.free-plan em{color:var(--dim)}
 .plan b{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:1}
 .plan b small{font-size:22px;color:var(--soft)}
-.plan span{display:block;color:var(--soft);font-size:16px}
-.buy .go{display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:260px}
-.buy .go p{font-size:14px;color:var(--dim)}
+.plan span{display:block;color:var(--soft);font-size:15.5px}
+.plan ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px;color:var(--soft)}
+.plan li{display:flex;gap:8px}.plan li::before{content:'✓';color:var(--brand);font-weight:700}
+.plan .btn{margin-top:auto}
+.plan>.btn{margin-top:16px}
 .pro .free{margin-top:20px;font-size:15px;color:var(--dim);max-width:780px}
 
 .priv{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:64px;align-items:start}
@@ -268,6 +295,8 @@ footer{background:var(--bark);color:var(--soft)}
 .foot .mark{font-size:24px}
 .small{color:var(--dim);font-size:13px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px}
 .small a{color:var(--dim)}
+.sibs{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.sibs a{color:var(--soft);font-weight:600;text-decoration:none}.sibs a:hover{color:var(--brand)}
 
 /* early access: one form, shown in the closing section and moved into the dialog when a button opens it */
 dialog.ea{border:0;padding:0;border-radius:22px;width:min(480px,calc(100% - 32px));max-height:calc(100% - 32px);background:var(--field);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5)}
@@ -295,13 +324,14 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 [hidden]{display:none!important}
 
 @media (max-width:1060px){
-.hero-body{grid-template-columns:minmax(0,1fr);gap:8px}
-.hero-copy{padding-bottom:24px}
-.hero-shot{margin:0 auto -140px;width:min(360px,100%)}
+.hero-body{grid-template-columns:minmax(0,640px);padding-bottom:64px}
+.hero-copy>.pin{grid-column:1;grid-row:auto;margin-top:28px;max-width:520px}
 .pro-top{grid-template-columns:minmax(0,1fr)}
-.groups{grid-template-columns:repeat(2,minmax(0,1fr))}
+.alerts{position:static;max-width:520px}
 .buy{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.buy .go{grid-column:1/-1}
+.buy .free-plan{grid-column:1/-1;order:3}
+.safe{grid-template-columns:minmax(0,1fr);gap:40px}
+.safe figure{max-width:340px;order:2}
 }
 @media (max-width:900px){
 .nav .links a:not(.btn){display:none}
@@ -323,20 +353,20 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 .nav{gap:10px;padding:14px 0}
 .mark{font-size:26px}
 .hero-body{padding-top:8px}
-.hero-copy{gap:18px;padding-top:4px}
 .hero h1{font-size:48px}
 .hero .kicker{font-size:15px;letter-spacing:.06em;line-height:1.3}
 .hero .lede{font-size:18px}
 .hero .ghost{display:none}
 .hero::before{background:linear-gradient(0deg,rgba(20,18,15,.9) 0%,rgba(20,18,15,.75) 60%,rgba(20,18,15,.5) 100%)}
-.hero-shot{width:300px;margin-bottom:0}
-.hero-shot .phone{border-radius:34px 34px 0 0;border-bottom:0}
-.hero-shot .phone img{aspect-ratio:390/470;object-fit:cover;object-position:50% 50%}
+.hero-body{padding-bottom:48px}
+.hero-copy>*+*{margin-top:18px}
+.hero-copy>.pin{margin-top:22px}
+.verdict .word{font-size:31px}
 .hero .fine{font-size:14px}
-.hero-copy{padding-bottom:20px}
 .ctas .btn{width:100%}
-.groups{grid-template-columns:minmax(0,1fr)}
+.gains b{font-size:23px}
 .buy{grid-template-columns:minmax(0,1fr)}
+.buy .free-plan{grid-column:auto}
 .sec{padding:80px 0}
 .mapsec,.pro>.wrap{padding-top:80px;padding-bottom:80px}
 .alert:nth-child(2){margin-left:12px}.alert:nth-child(3){margin-left:24px}
@@ -359,28 +389,27 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <img class="topo" src="img/contours.svg" alt="" aria-hidden="true">
 <div class="wrap">
 <div class="nav">
-<a class="mark" href="#top" aria-label="Shootable, back to top">Shootable</a>
+<a class="mark" href="#top" aria-label="Shootable, back to top"><svg aria-hidden="true"><use href="#logo"/></svg>Shootable</a>
 <nav class="links" aria-label="Main"><a href="#answers">How it answers</a><a href="#map">The map</a><a href="#checks">What it checks</a><a href="#safety">Safety</a><a href="#pro">Pro</a><a href="faq/">Questions</a><a class="btn primary sm" href="#early-access" data-early>Get early access</a></nav>
 <details class="menu"><summary><span class="when-closed">Menu</span><span class="when-open">Close</span></summary><nav aria-label="Sections"><a href="#answers">How it answers</a><a href="#map">The map</a><a href="#checks">What it checks</a><a href="#safety">Safety</a><a href="#downrange">Downrange</a><a href="#lanes">Lanes</a><a href="#pro">Pro</a><a href="faq/">Questions</a></nav></details>
 </div>
 </div>
 <div class="wrap hero-body">
 <div class="hero-copy">
-<p class="kicker">Crown land, towns, parks and fire orders</p>
-<h1>Check any spot before you shoot.</h1>
-<p class="lede">Tap a spot and pick your firearm. Shootable tells you whether a rule bans shooting there today, names the rule, and shades the map around you.</p>
+<h1>Can I shoot here, right now?</h1>
+<p class="lede">Put the pin on any spot in BC and pick your firearm. Shootable checks closed areas, town bylaws, parks, reserves and today's fire orders, and gives you one answer with the rule behind it.</p>
+<div class="pin" aria-label="Example answer">
+<div class="verdict s-clear" id="exCard" aria-live="polite"><span class="demo-tag">Example</span><div class="badge" id="exBadge" aria-hidden="true"></div>
+<div><div class="word" id="exWord">No prohibition found</div><div class="why" id="exWhy">No rule Shootable checks bans a rifle here today. Stay 100 m from any dwelling, and off the highway's road allowance.</div><div class="where"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6Z"/><path d="M9 12h7M9 16h5"/></svg><span id="exWhere">Crown land south of Merritt · rules that apply everywhere</span></div></div></div>
+<div class="row" role="group" aria-label="Example spot"><span>Spot</span><button type="button" data-spot="crown" aria-pressed="true">Crown land</button><button type="button" data-spot="town" aria-pressed="false">In town</button><button type="button" data-spot="rec" aria-pressed="false">Rec site</button><button type="button" data-spot="fire" aria-pressed="false">Fire order</button></div>
+<div class="row" role="group" aria-label="Example firearm"><span>Firearm</span><button type="button" data-arm="rifle" aria-pressed="true">Rifle</button><button type="button" data-arm="shot" aria-pressed="false">Shotgun with shot</button></div>
+<p class="cap">Tap a spot and a firearm. These are example answers: yours depends on your exact spot, firearm and date.</p>
+</div>
 <div class="ctas">
 <a class="btn primary" href="#early-access" data-early>Get early access</a>
 <a class="btn ghost" href="#answers">See how it answers</a>
 </div>
-<p class="fine">Google Play first, then the App Store. BC now, Alberta next. Checking a spot is always free.</p>
-</div>
-<!-- Hero: a real screen from the app (app/ in the shootable repo), rifle, BC pack 2026.11.05-v0 with the fire feed of Nov 6:
-     -120.9028, 50.0525, Crown land south of Merritt, answers No prohibition found; Merritt's Coldwater valley and the highway
-     corridor are shaded Not confirmed. The downrange arc is hidden for the picture. When the pack changes, re-check the spot
-     (node app/engine.js) and recapture; if it no longer answers clear, pick another spot. -->
-<div class="hero-shot">
-<div class="phone"><img src="img/app-merritt-rifle.webp" srcset="img/app-merritt-rifle-1x.webp 390w, img/app-merritt-rifle.webp 780w" sizes="(max-width:560px) 300px, 400px" width="390" height="844" alt="Shootable on a phone: a map of the hills south of Merritt with a pin on Crown land and the valley around Coldwater shaded Not confirmed. The answer for a rifle reads No prohibition found, with three conditions: stay more than 100 m from any dwelling, school, church or occupied farm building; don't shoot from a highway's road allowance; and the Thompson-Nicola noise bylaw."></div>
+<p class="fine">Google Play first, then the App Store. BC now, Alberta next. Checking a spot is always free; <a href="#pro" style="color:inherit">Pro</a> adds offline maps, downrange checks and alerts.</p>
 </div>
 </div>
 </header>
@@ -391,7 +420,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg><span><b>Built for target shooting.</b> Rules that hunters are exempt from still count here.</span></li>
 <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6Z"/><path d="M9 12h7M9 16h5"/></svg><span><b>Shows its work.</b> Every answer names the regulation or bylaw and the date of the rules on your phone.</span></li>
 </ul>
-<p class="hero-cap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg><span><b>Real app screen</b> · rifle, Crown land south of Merritt · BC rules of Nov 4, 2026 · map © OpenStreetMap contributors</span></p>
+
 </div>
 </div>
 
@@ -480,7 +509,15 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </section>
 
 <section id="safety" class="sec">
-<div class="wrap">
+<div class="wrap safe">
+<!-- A real screen from the app (app/ in the shootable repo), rifle, BC pack 2026.11.05-v0 with the fire feed of Nov 6:
+     -120.9028, 50.0525, Crown land south of Merritt, answers No prohibition found with the conditions shown. When the pack
+     changes, re-check the spot (node app/engine.js) and recapture; if it no longer answers clear, pick another spot. -->
+<figure>
+<div class="phone"><img src="img/app-merritt-rifle.webp" srcset="img/app-merritt-rifle-1x.webp 390w, img/app-merritt-rifle.webp 780w" sizes="340px" width="390" height="844" loading="lazy" alt="Shootable on a phone: a map of the hills south of Merritt with a pin on Crown land and the valley around Coldwater shaded Not confirmed. The answer for a rifle reads No prohibition found, with three conditions: stay more than 100 m from any dwelling, school, church or occupied farm building; don't shoot from a highway's road allowance; and the Thompson-Nicola noise bylaw."></div>
+<figcaption><b>Real app screen.</b> Rifle, Crown land south of Merritt, BC rules of Nov 4, 2026. Map © OpenStreetMap contributors.</figcaption>
+</figure>
+<div>
 <div class="head">
 <span class="eyebrow">Safety</span>
 <h2>Safety comes with every answer</h2>
@@ -488,17 +525,18 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </div>
 <ul class="vs3">
 <li><i>Every answer</i><b>Checked around your GPS accuracy</b><span>Near a boundary, Shootable checks a ring as wide as your GPS error. If any part of it falls where shooting is prohibited, the answer is Not confirmed, not a guess about which side you're on.</span></li>
-<li><i>Pro</i><b>What's in your line of fire</b><span>The downrange check lists mapped buildings, roads, trails and property lines out to your cartridge's danger distance. <a href="#downrange">See how it works</a>.</span></li>
-<li><i>Pro</i><b>Daylight, wind and fire danger</b><span>The day's light, wind, lightning and fire danger for the spot, so you know before you drive out.</span></li>
+<li><i><span class="pro-tag">Pro</span>Line of fire</i><b>What's in your line of fire</b><span>The downrange check lists mapped buildings, roads, trails and property lines out to your cartridge's danger distance. <a href="#downrange">See how it works</a>.</span></li>
+<li><i><span class="pro-tag">Pro</span>Conditions</i><b>Daylight, wind and fire danger</b><span>The day's light, wind, lightning and fire danger for the spot, so you know before you drive out.</span></li>
 </ul>
 <p class="basics"><b>The basics still come first.</b> ACTS and PROVE from your firearms safety course, a safe backstop, a clear line of fire, and no shooting toward anything you can't see past.</p>
+</div>
 </div>
 </section>
 
 <section id="downrange" class="scene">
 <div class="wrap split">
 <div class="copy">
-<span class="eyebrow">Pro · downrange</span>
+<span class="eyebrow"><span class="pro-tag">Pro</span>Downrange check</span>
 <h2>Know what's downrange before you shoot</h2>
 <p>A spot can be open to shooting and still be the wrong place to shoot toward. The downrange check shows what's mapped in your line of fire, out to the distance your cartridge can carry.</p>
 <ol class="steps">
@@ -549,7 +587,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <section id="lanes" class="lanes light sec">
 <div class="wrap">
 <div class="head">
-<span class="eyebrow">Pro · longer shots</span>
+<span class="eyebrow"><span class="pro-tag">Pro</span>Lane finder</span>
 <h2>Find a lane, not just a spot</h2>
 <p>Past 300 m the question changes from "may I shoot here?" to "where can I shoot from here?". The lane finder works outward from the spot you're standing on and shows the bearings worth walking.</p>
 </div>
@@ -608,12 +646,19 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <section id="pro" class="pro">
 <img class="topo" src="img/contours.svg" alt="" aria-hidden="true" loading="lazy">
 <div class="wrap">
-<div class="pro-top">
-<div>
+<div class="pro-head">
 <span class="eyebrow">Shootable Pro</span>
-<h2>Pro is for the trip</h2>
-<p>Checking a spot is always free, and so is anything that changes the answer. Pro adds what you need away from home: rules that work with no signal, a heads-up when something changes near your spots, and a check of what's beyond your target.</p>
+<h2>Pro: works with no signal, and checks what's downrange</h2>
+<p>The answer is always free, and so is anything that changes it. Pro is for the trip: it keeps working in the hills, watches your spots after you leave, and checks what's past your target. About CA$2 a month.</p>
 </div>
+<div class="pro-top">
+<ul class="gains">
+<li><span class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 20 0"/><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><path d="M12 20h.01"/><path d="m3 3 18 18"/></svg></span><b>Works with no signal</b><span>Save a region at home: every rule layer, the map, the terrain and this season's satellite imagery come with it, so a cutblock or gravel pit looks the way it does now.</span></li>
+<li><span class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><b>Know what's downrange</b><span>Buildings, roads, trails and property lines in your line of fire, out to your cartridge's danger distance. For longer shots, the lane finder shows bearings with line of sight, a rising backstop and nothing mapped in the fan. <a href="#downrange">How it works</a></span></li>
+<li><span class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><b>Hear when the answer changes</b><span>Fire orders, closed-area amendments and bylaw changes near your saved spots. Save as many as you like; they're re-checked with every update and never leave your phone.</span></li>
+<li><span class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 9 4h6l6 16"/><path d="M12 6v2M12 11v2M12 16v2"/></svg></span><b>Get there on forest roads</b><span>Plan a road or a whole area before you drive out, then follow directions by road name with km boards from the road record and the radio channel from the district's channel map. The channel posted at the road always governs.</span></li>
+<li><span class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg></span><b>Pick your window</b><span>Wind, rain, lightning, daylight and fire danger for the spot, and the hours when the crosswind on your lane is low.</span></li>
+</ul>
 <div class="alerts" aria-label="Example Pro alerts">
 <div class="alert"><svg aria-hidden="true"><use href="#logo"/></svg><div class="t"><span>Shootable</span><span>7:42 am</span></div><b>Fire order near a saved spot</b><span>An area restriction now covers "Ridge above the creek". It answers Prohibited until the order ends.</span></div>
 <div class="alert"><svg aria-hidden="true"><use href="#logo"/></svg><div class="t"><span>Shootable</span><span>Yesterday</span></div><b>2 saved spots re-checked</b><span>A town's bylaw map near you was verified. "Lane 2" now answers No prohibition found.</span></div>
@@ -621,32 +666,12 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <p class="illus">Illustration with invented data.</p>
 </div>
 </div>
-<div class="groups">
-<div><h3>Without signal</h3><ul>
-<li><b>Offline regions</b>Save a region at home and every rule layer, the map and the terrain work with no signal.</li>
-<li><b>Offline imagery</b>This season's satellite imagery saved with the region, so a cutblock or gravel pit looks the way it does now.</li>
-<li><b>Drive there</b>Directions on mapped forest roads to a saved spot, by road name, with km boards from the road record and the radio channel from the district's channel map (most BC districts; not yet Selkirk or Haida Gwaii). The channel posted at the road always governs.</li>
-</ul></div>
-<div><h3>Before you go</h3><ul>
-<li><b>Plan an area</b>Check a forest road or a whole area before you drive out, not one pin at a time.</li>
-<li><b>Conditions and wind window</b>Wind, rain, lightning, daylight and fire danger for the spot, and the hours when the crosswind on your lane is low.</li>
-</ul></div>
-<div><h3>Stay current</h3><ul>
-<li><b>Rule-change alerts</b>Closed-area amendments, bylaw changes and fire orders near your saved spots.</li>
-<li><b>Private saved spots</b>As many as you like, re-checked when the data changes. Kept on your phone, never shared or ranked.</li>
-</ul></div>
-<div><h3>Shoot farther, safely</h3><ul>
-<li><b>Downrange check</b>What's mapped in your line of fire, out to your cartridge's danger distance. <a href="#downrange">How it works</a></li>
-<li><b>Lane finder</b>Bearings with line of sight, a rising backstop and nothing mapped in the fan. <a href="#lanes">How it works</a></li>
-<li><b>Lane cards</b>Targets, azimuths, ground profile and parking, with a dated check.</li>
-</ul></div>
-</div>
 <div class="buy">
-<div class="plan best"><em>Best value · 14 days free</em><b>CA$24.99<small> a year</small></b><span>About CA$2 a month, billed yearly after the free trial.</span></div>
-<div class="plan"><em>Monthly</em><b>CA$4.99<small> a month</small></b><span>For one trip or a fire season. Cancel anytime.</span></div>
-<div class="go"><a class="btn primary" href="#early-access" data-early>Get early access</a><p>We'll email you once when it's on your phone.</p></div>
+<div class="plan free-plan"><em>Free, always</em><b>CA$0</b><ul><li>Every answer, every rule layer</li><li>Map shading for your firearm</li><li>Sources and dates on every answer</li><li>One saved spot</li></ul></div>
+<div class="plan best"><em>Pro yearly · 14 days free</em><b>CA$24.99<small> a year</small></b><span>About CA$2 a month, billed yearly after the free trial.</span><a class="btn primary" href="#early-access" data-early>Get early access</a></div>
+<div class="plan"><em>Pro monthly</em><b>CA$4.99<small> a month</small></b><span>For one trip or a fire season. Cancel anytime.</span></div>
 </div>
-<p class="free">Subscriptions are billed through Google Play or the App Store and renew until you cancel.</p>
+<p class="free">We'll email you once when it's on your phone. Subscriptions are billed through Google Play or the App Store and renew until you cancel.</p>
 </div>
 </section>
 
@@ -697,7 +722,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 
 <footer>
 <div class="wrap foot">
-<span class="mark">Shootable</span>
+<span class="mark"><svg aria-hidden="true"><use href="#logo"/></svg>Shootable</span>
 <a href="#answers">How it answers</a>
 <a href="#checks">What it checks</a>
 <a href="#privacy">Privacy</a>
@@ -706,6 +731,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <span>hello@10tenStudio.com</span>
 </div>
 <div class="wrap small">
+<span class="sibs">Also by 10ten Studio: <a href="https://gethuntable.app">Huntable</a><a href="https://getfishable.app">Fishable</a><a href="https://getcampable.app">Campable</a><a href="https://getpickable.app">Pickable</a></span>
 <span>Shootable is made by 10ten Studio Inc. It is not a government app and is not affiliated with the Government of British Columbia. It's a guide built from public regulations, bylaws and open data, not a lawyer's opinion. The official regulations and bylaws govern.</span>
 <span>App screens: map data © OpenStreetMap contributors (ODbL) via Protomaps; terrain from Copernicus DEM GLO-30 © DLR, Airbus (ESA/EU). Contours: BC TRIM. Contains information licensed under the Open Government Licence – British Columbia.</span>
 </div>
@@ -746,6 +772,39 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
     } finally { go.disabled = false; go.textContent = 'Join the list'; }
   });
   if (location.hash === '#early-access') document.querySelector('[data-early]').click();
+})();
+// Hero example: four spots, two firearms. Each case matches what the BC pack answers (see the comments on the map and
+// safety sections); the card is labelled Example and the caption says real answers depend on the spot.
+(() => {
+  const card = document.getElementById('exCard'); if (!card) return;
+  const tick = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+  const no = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="m6 6 12 12"/></svg>';
+  const q = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9a3 3 0 1 1 4 2.8c-.7.3-1 .9-1 1.7V14"/><path d="M12 18h.01"/></svg>';
+  const S = { clear: ['s-clear', tick, 'No prohibition found'], no: ['s-no', no, 'Prohibited'], unsure: ['s-unsure', q, 'Not confirmed'] };
+  const A = {
+    crown: { rifle: ['clear', 'No rule Shootable checks bans a rifle here today. Stay 100 m from any dwelling, and off the highway\'s road allowance.', 'Crown land south of Merritt · rules that apply everywhere'],
+             shot: ['clear', 'No rule Shootable checks bans a shotgun with shot here today. Stay 100 m from any dwelling, and off the highway\'s road allowance.', 'Crown land south of Merritt · rules that apply everywhere'] },
+    town:  { rifle: ['no', 'Coquitlam bans discharging a rifle anywhere in the city.', 'Coquitlam · the city\'s discharge bylaw'],
+             shot: ['unsure', 'Coquitlam allows shot only in zones on its bylaw map, and Shootable hasn\'t checked that map yet. It says so instead of guessing.', 'Coquitlam · the city\'s discharge bylaw and zone map'] },
+    rec:   { rifle: ['unsure', 'You can\'t shoot on or into the developed part of a recreation site, and that part isn\'t mapped.', 'Inside a recreation site · Forest Recreation Regulation s.11'],
+             shot: ['unsure', 'You can\'t shoot on or into the developed part of a recreation site, and that part isn\'t mapped.', 'Inside a recreation site · Forest Recreation Regulation s.11'] },
+    fire:  { rifle: ['no', 'A BC Wildfire Service area restriction covers this spot. It answers Prohibited until the order ends.', 'Area restriction order · BC Wildfire Service, checked every 2 h in fire season'],
+             shot: ['no', 'A BC Wildfire Service area restriction covers this spot. It answers Prohibited until the order ends.', 'Area restriction order · BC Wildfire Service, checked every 2 h in fire season'] },
+  };
+  let spot = 'crown', arm = 'rifle';
+  const draw = () => {
+    const [k, why, where] = A[spot][arm], [cls, icon, word] = S[k];
+    card.className = 'verdict ' + cls;
+    document.getElementById('exBadge').innerHTML = icon;
+    document.getElementById('exWord').textContent = word;
+    document.getElementById('exWhy').textContent = why;
+    document.getElementById('exWhere').textContent = where;
+  };
+  const wire = (attr, set) => document.querySelectorAll('[' + attr + ']').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('[' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    set(b.getAttribute(attr)); draw();
+  }));
+  wire('data-spot', v => spot = v); wire('data-arm', v => arm = v); draw();
 })();
 // The map section on phones: one screen at a time, switched by firearm.
 document.querySelectorAll('.toggle button').forEach(b => b.addEventListener('click', () => {
