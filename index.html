@@ -95,8 +95,10 @@ p{margin:0;text-wrap:pretty}
 .verdict .where{font-size:13.5px;margin-top:8px;opacity:.95;display:flex;gap:6px;align-items:flex-start}
 .verdict .where svg{flex:none;margin-top:2px}
 .demo-tag{position:absolute;top:12px;right:12px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,.3);color:#fff;border-radius:999px;padding:3px 9px}
-.pin .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.pin .row>span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-right:4px}
+/* label in its own column, so choices that wrap line up under the first one */
+.pin .row{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:8px;align-items:start}
+.pin .row>span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;line-height:44px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.pin .opts{display:flex;flex-wrap:wrap;gap:8px}
 .pin button{font:600 15px 'IBM Plex Sans',sans-serif;min-height:44px;padding:0 15px;border-radius:999px;border:1.5px solid rgba(255,255,255,.45);background:rgba(20,18,15,.55);color:#fff;cursor:pointer}
 .pin button:hover{border-color:#fff}
 .pin button[aria-pressed=true]{background:#fff;color:var(--bark);border-color:#fff}
@@ -406,8 +408,8 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <div class="pin" aria-label="Example answer">
 <div class="verdict s-clear" id="exCard" aria-live="polite"><span class="demo-tag">Example</span><div class="badge" id="exBadge" aria-hidden="true"></div>
 <div><div class="word" id="exWord">No prohibition found</div><div class="why" id="exWhy">No rule Shootable checks bans a rifle here today. Stay 100 m from any dwelling, and off the highway's road allowance.</div><div class="where"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6Z"/><path d="M9 12h7M9 16h5"/></svg><span id="exWhere">Crown land south of Merritt · rules that apply everywhere</span></div></div></div>
-<div class="row" role="group" aria-label="Example spot"><span>Spot</span><button type="button" data-spot="crown" aria-pressed="true">Crown land</button><button type="button" data-spot="town" aria-pressed="false">In town</button><button type="button" data-spot="rec" aria-pressed="false">Rec site</button><button type="button" data-spot="fire" aria-pressed="false">Fire order</button></div>
-<div class="row" role="group" aria-label="Example firearm"><span>Firearm</span><button type="button" data-arm="rifle" aria-pressed="true">Rifle</button><button type="button" data-arm="shot" aria-pressed="false">Shotgun with shot</button></div>
+<div class="row" role="group" aria-label="Example spot"><span>Spot</span><div class="opts"><button type="button" data-spot="crown" aria-pressed="true">Crown land</button><button type="button" data-spot="town" aria-pressed="false">In town</button><button type="button" data-spot="rec" aria-pressed="false">Rec site</button><button type="button" data-spot="fire" aria-pressed="false">Fire order</button></div></div>
+<div class="row" role="group" aria-label="Example firearm"><span>Firearm</span><div class="opts"><button type="button" data-arm="rifle" aria-pressed="true">Rifle</button><button type="button" data-arm="shot" aria-pressed="false">Shotgun with shot</button></div></div>
 <p class="cap">Tap a spot and a firearm. These are example answers: yours depends on your exact spot, firearm and date.</p>
 </div>
 <div class="ctas">
