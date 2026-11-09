@@ -19,10 +19,10 @@
 @font-face{font-family:'IBM Plex Sans';font-weight:600;font-display:swap;src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format('woff2')}
 /* The 10ten app-page system (Huntable, Fishable): bark and field neutrals, Barlow Condensed caps over IBM Plex Sans,
    one brand colour per app. Shootable's crimson stays on the mark and icon; buttons use the app's sage. On this page red
-   means Prohibited and amber means Not confirmed, as in the app, and nothing else uses them: hazards in the diagrams are
+   means Prohibited and navy means Not confirmed, as in the app and the rest of the family, and nothing else uses them: hazards in the diagrams are
    drawn in sand and white. */
 :root{--bark:#1B1915;--bark2:#2A2722;--field:#F5F6F3;--field2:#ECEEE8;--ink:#14120F;--muted:#4D514C;--soft:#E6E3DC;--dim:#B8B3A9;
---crimson:#8E1B2E;--brand:#8FCBAE;--brand-hover:#A9D9C1;--brand-ink:#2F5D4A;--no:#B3261E;--clear:#2E6B3F;--unsure:#8A6D00;--sand:#E6E3DC}
+--crimson:#8E1B2E;--brand:#8FC4A6;--brand-hover:#A9D9C1;--brand-ink:#2F5D4A;--no:#B3261E;--clear:#0E6B3A;--unsure:#2F4A6E;--sand:#E6E3DC}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -87,9 +87,9 @@ p{margin:0;text-wrap:pretty}
    BC pack; the card says Example and the caption says your answer depends on your spot, firearm and date. */
 .pin{display:flex;flex-direction:column;gap:12px}
 .verdict{position:relative;border-radius:18px;padding:16px 18px 16px 16px;display:grid;grid-template-columns:46px minmax(0,1fr);gap:14px;align-items:start;color:#fff;box-shadow:0 18px 40px rgba(0,0,0,.45);min-height:156px}
-.verdict.s-unsure{color:var(--ink)}
+.verdict.s-unsure{color:#fff}
 .verdict .badge{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-top:4px}
-.verdict.s-unsure .badge{background:rgba(0,0,0,.12)}
+.verdict.s-unsure .badge{background:rgba(255,255,255,.18)}
 .verdict .word{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;line-height:.92;text-transform:uppercase;padding-right:70px}
 .verdict .why{font-size:15.5px;font-weight:500;margin-top:6px;line-height:1.38}
 .verdict .where{font-size:13.5px;margin-top:8px;opacity:.95;display:flex;gap:6px;align-items:flex-start}
@@ -108,7 +108,7 @@ p{margin:0;text-wrap:pretty}
 /* the three answers: each has its own colour AND pattern, so they read in glare and with colour blindness */
 .s-no{background-color:var(--no);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.13) 0 10px,transparent 10px 20px)}
 .s-clear{background-color:var(--clear)}
-.s-unsure{background-color:#F2B12E;color:var(--ink)!important;background-image:radial-gradient(rgba(0,0,0,.16) 1.5px,transparent 1.6px);background-size:10px 10px}
+.s-unsure{background-color:var(--unsure);color:#fff!important}
 
 .band{background:var(--bark);color:var(--soft);position:relative;z-index:3}
 .band ul{list-style:none;margin:0;padding:26px 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 40px}
@@ -126,7 +126,7 @@ section{scroll-margin-top:12px}
 .state h3{font-size:40px;line-height:.92}
 .state p{font-size:16px;line-height:1.45}
 .state .eg{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,.3);font-size:14.5px}
-.state.s-unsure .eg{border-color:rgba(0,0,0,.2)}
+.state.s-unsure .eg{border-color:rgba(255,255,255,.3)}
 .note{margin-top:20px;font-size:16px;color:var(--muted);max-width:780px}
 .cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:36px;padding-top:28px;border-top:2px solid var(--ink)}
 .cta-row p{font-size:17px;color:var(--muted)}
@@ -150,7 +150,7 @@ section{scroll-margin-top:12px}
 .keys b{color:#fff;font-weight:600}
 .sw{grid-row:span 2;width:30px;height:22px;border-radius:5px;margin-top:2px}
 .sw.no{background:rgba(179,38,30,.45);box-shadow:inset 0 0 0 2px #E06A62}
-.sw.un{background:repeating-linear-gradient(-45deg,#D9B85A 0 2px,transparent 2px 6px);box-shadow:inset 0 0 0 1.5px #D9B85A}
+.sw.un{background:repeating-linear-gradient(-45deg,#8FB0DA 0 2px,transparent 2px 6px);box-shadow:inset 0 0 0 1.5px #8FB0DA}
 .sw.cl{background:#6B7A5E;box-shadow:inset 0 0 0 1.5px #9AAA8C}
 .mapsec .fineprint{margin-top:28px;font-size:13.5px;color:var(--dim);max-width:780px}
 
@@ -217,9 +217,9 @@ section{scroll-margin-top:12px}
 .dr-bldg{fill:#8A857B;stroke:#14120F;stroke-width:2}
 .dr-bldg.hit{fill:#fff;stroke:#14120F;stroke-width:2.5}
 .dr-halo{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:3 3}
-.ln-fan{fill:rgba(143,203,174,.22);stroke:#8FCBAE;stroke-width:2}
+.ln-fan{fill:rgba(143,196,166,.22);stroke:#8FC4A6;stroke-width:2}
 .ln-no{fill:url(#cross);stroke:#8A857B;stroke-width:1.5;stroke-dasharray:5 5}
-.ln-tgt{fill:#8FCBAE;stroke:#14120F;stroke-width:2}
+.ln-tgt{fill:#8FC4A6;stroke:#14120F;stroke-width:2}
 .ln-ground{fill:#3A362E}
 .ln-line{fill:none;stroke:#C9B37A;stroke-width:2.5}
 .dr-you{fill:var(--brand);stroke:#14120F;stroke-width:3}
@@ -255,7 +255,7 @@ section{scroll-margin-top:12px}
 .pro-top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:64px;align-items:start}
 .gains{list-style:none;margin:0;padding:0;display:grid;gap:26px}
 .gains li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px 16px;font-size:16.5px;color:var(--dim);line-height:1.5}
-.gains .ic{grid-row:span 2;width:44px;height:44px;border-radius:12px;background:rgba(143,203,174,.14);color:var(--brand);display:flex;align-items:center;justify-content:center}
+.gains .ic{grid-row:span 2;width:44px;height:44px;border-radius:12px;background:rgba(143,196,166,.14);color:var(--brand);display:flex;align-items:center;justify-content:center}
 .gains b{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;line-height:1.05;text-transform:uppercase}
 .gains a{color:var(--brand)}
 .alerts{display:grid;gap:10px;position:sticky;top:24px}
@@ -268,7 +268,7 @@ section{scroll-margin-top:12px}
 .alerts p.illus{margin:6px 0 0 48px;color:var(--dim);font-size:13.5px}
 .buy{margin-top:72px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
 .plan{border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.16)}
-.plan.best{border-color:var(--brand);background:rgba(143,203,174,.1)}
+.plan.best{border-color:var(--brand);background:rgba(143,196,166,.1)}
 .plan em{font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:15px;color:var(--brand)}
 .plan.free-plan em{color:var(--dim)}
 .plan b{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:1}
@@ -404,7 +404,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <div class="wrap hero-body">
 <div class="hero-copy">
 <h1>Can I shoot here, right now?</h1>
-<p class="lede">Put the pin on any spot in BC and pick your firearm. Shootable checks closed areas, town bylaws, parks, reserves and today's fire orders, and gives you one answer with the rule behind it.</p>
+<p class="lede">Put the crosshair on any spot in BC and pick your firearm. Shootable checks closed areas, town bylaws, parks, reserves and today's fire orders, and gives you one answer with the rule behind it.</p>
 <div class="pin" aria-label="Example answer">
 <div class="verdict s-clear" id="exCard" aria-live="polite"><span class="demo-tag">Example</span><div class="badge" id="exBadge" aria-hidden="true"></div>
 <div><div class="word" id="exWord">No prohibition found</div><div class="why" id="exWhy">No rule Shootable checks bans a rifle here today. Stay 100 m from any dwelling, and off the highway's road allowance.</div><div class="where"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6Z"/><path d="M9 12h7M9 16h5"/></svg><span id="exWhere">Crown land south of Merritt · rules that apply everywhere</span></div></div></div>
