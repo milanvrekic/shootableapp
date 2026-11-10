@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shootable privacy policy</title>
+<meta name="description" content="What the Shootable app and website collect, what stays on your phone, who handles the rest, and how to ask for your information.">
+<meta name="theme-color" content="#1B1915">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://getshootable.app/privacy/">
+<style>
+@font-face{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(../fonts/barlow-condensed-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-weight:400;font-display:swap;src:url(../fonts/ibm-plex-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-weight:600;font-display:swap;src:url(../fonts/ibm-plex-sans-latin-600-normal.woff2) format('woff2')}
+:root{--bark:#1B1915;--field:#F5F6F3;--ink:#14120F;--muted:#4D514C;--soft:#E6E3DC;--dim:#B8B3A9;--brand:#8FCBAE;--brand-ink:#2F5D4A;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);background:var(--field);font-size:18px;line-height:1.55;-webkit-text-size-adjust:100%}
+a{color:var(--brand-ink)}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+h1,h2,h3{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.005em;margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+header{background:var(--bark);color:#fff}
+.nav{display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding-block:20px}
+.mark{display:inline-flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase;color:#fff;text-decoration:none;letter-spacing:.02em}
+.mark svg{width:30px;height:30px;border-radius:8px}
+.nav .back{margin-left:auto;color:#fff;font-weight:600;font-size:16px;text-decoration:none}
+.nav .back:hover{color:var(--brand)}
+.title{padding-block:40px 56px}
+.title h1{font-size:clamp(48px,7vw,80px);line-height:.9}
+.title p{margin-top:14px;color:var(--soft);font-size:19px;max-width:620px}
+main{padding-block:56px 80px}
+.group{display:grid;gap:28px;margin-bottom:56px}
+.group>h2{font-size:34px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.q h3{font-size:25px;margin-bottom:6px}
+.q p+p{margin-top:10px}
+.q{max-width:760px}
+footer{background:var(--bark);color:var(--dim);font-size:14px}
+footer .wrap{padding-block:32px calc(32px + env(safe-area-inset-bottom,0px));display:grid;gap:10px}
+footer a{color:#fff}
+@media (max-width:560px){.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}
+.doc{max-width:760px}
+.doc .updated{color:var(--muted);font-size:16px;margin-bottom:8px}
+.doc .lead{font-size:20px}
+.doc section{display:grid;gap:12px;margin-top:44px}
+.doc h2{font-size:30px;border-bottom:2px solid var(--ink);padding-bottom:6px}
+.doc h3{font-size:22px;margin-top:8px}
+.doc ul{margin:0;padding-left:22px;display:grid;gap:8px}
+.doc table{border-collapse:collapse;width:100%;font-size:16px}
+.doc th,.doc td{text-align:left;vertical-align:top;padding:10px 12px 10px 0;border-bottom:1px solid var(--dim)}
+.doc th{font-weight:600}
+.doc .box{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:18px 20px}
+@media (max-width:560px){.doc table,.doc tbody,.doc tr,.doc td{display:block;width:100%}.doc thead{display:none}.doc td{border:0;padding:2px 0}.doc tr{border-bottom:1px solid var(--dim);padding:10px 0}.doc td:first-child{font-weight:600}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="logo" viewBox="0 0 108 108"><rect width="108" height="108" rx="24" fill="#8E1B2E"/><path d="M10 80C18 80 26 40 40 38H68C82 40 90 80 98 80Z" fill="#fff"/><path d="M38 60 49 71 70 49" fill="none" stroke="#8E1B2E" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+<header>
+<div class="wrap">
+<nav class="nav" aria-label="Main"><a class="mark" href="../">Shootable</a><a class="back" href="../">← Back to Shootable</a></nav>
+<div class="title"><h1>Privacy policy</h1><p>Where shooting may be allowed. Never where people go.</p></div>
+</div>
+</header>
+<main class="wrap doc">
+<p class="updated">Last updated November 10, 2026</p>
+<p class="lead">Shootable answers questions about places, not people. The rules are on your phone, so checking a spot doesn't send it anywhere. This page explains the few things that do leave your phone, who handles them and what you can ask us to do.</p>
+
+<div class="box"><p><b>In short:</b> no account, no location tracking, no ads, nothing sold. Saved spots stay on your phone. We count how the app is used (counts and dates, never a place), Google Play and RevenueCat handle subscriptions, and a few optional features ask an outside service for map tiles or a weather forecast.</p></div>
+
+<section>
+<h2>Who we are</h2>
+<p>Shootable is made by 10ten Studio Inc., British Columbia, Canada ("we"). This policy covers the Shootable app and getshootable.app. We follow British Columbia's Personal Information Protection Act and Canada's federal privacy law where it applies.</p>
+<p>Questions, requests and complaints: <a href="mailto:hello@10tenstudio.com">hello@10tenstudio.com</a>. That inbox reaches the person responsible for privacy at 10ten Studio.</p>
+</section>
+
+<section>
+<h2>What stays on your phone</h2>
+<ul>
+<li><b>Your location.</b> When you tap "Me", the app reads your phone's location to check that spot. It isn't sent to us or stored by us.</li>
+<li><b>The spots you check.</b> Answers are worked out on the phone from rule data the app downloads. The spot you check isn't sent to get an answer.</li>
+<li><b>Saved spots, lanes and parking spots.</b> Stored in the app only. They aren't uploaded, pooled with other people's or used to rank anything. Uninstalling the app or clearing its data deletes them.</li>
+<li><b>Your settings.</b> Firearm choice, map view and similar preferences.</li>
+</ul>
+<p>We don't have accounts, and we don't build a profile of you.</p>
+</section>
+
+<section>
+<h2>What leaves your phone, and why</h2>
+<table>
+<thead><tr><th>What</th><th>Sent to</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Usage counts: the day you first opened the app, how many answers you've looked at, spots saved, and which upgrade prompts you saw or tapped</td><td>RevenueCat, attached to an anonymous ID for this install</td><td>To understand which parts of the app are useful. Counts and dates only: never a coordinate, place, search, saved spot or firearm.</td></tr>
+<tr><td>Subscription and purchase records</td><td>Google Play (or the App Store) and RevenueCat</td><td>To sell, renew and restore Pro. We never see your card details. Google or Apple handles payment under their own privacy policies.</td></tr>
+<tr><td>Requests for rule data, map, terrain and imagery tiles</td><td>Our data servers (Cloudflare), and for satellite imagery online, Esri</td><td>To download rules and draw the map. Like any web request, these include your IP address and the tiles for the area on screen. We don't link them to you or keep them to track you.</td></tr>
+<tr><td>A spot's coordinates, when you open the wind window</td><td>Our weather provider (currently Open-Meteo)</td><td>To get the forecast for that spot. Only when you ask for it.</td></tr>
+<tr><td>A destination, when you tap "Directions"</td><td>Google Maps, on your phone</td><td>Shootable hands the destination to your maps app. Only when you tap it.</td></tr>
+<tr><td>Error and sign reports</td><td>Us, by email</td><td>Your email app opens with the report filled in; nothing is sent unless you send it. Including the spot's coordinates is your choice.</td></tr>
+<tr><td>Text you share</td><td>Whoever you choose</td><td>Lane cards and answers are shared only through your phone's share sheet, when you start it.</td></tr>
+</tbody>
+</table>
+<p>Notifications (region downloads, data updates, reminders) are created on your phone. We don't use a push-notification service that receives your location.</p>
+</section>
+
+<section>
+<h2>The website and early access list</h2>
+<p>If you join the early access list, we keep your email address and whether you use Android or iPhone. We use them to tell you when Shootable is ready and, if you signed up early, to invite you to test it. We don't share or sell them, and we don't send marketing beyond that. The form is handled by Netlify, which hosts the site. Ask and we'll delete your address.</p>
+<p>The website doesn't use advertising or tracking cookies. Netlify keeps standard server logs (such as IP address and pages requested) to run and secure the site.</p>
+</section>
+
+<section>
+<h2>Service providers and where data is held</h2>
+<p>We use a small number of providers: Google (Google Play billing), RevenueCat (subscription status and usage counts), Cloudflare (data and map downloads), Netlify (website and early access form), Esri (online satellite imagery) and our weather provider. Some of them store data outside Canada, including in the United States, where it may be accessible to authorities under local law. We only send them what they need for the job above.</p>
+<p>We don't sell personal information, and we don't share it for advertising.</p>
+</section>
+
+<section>
+<h2>How long we keep it</h2>
+<ul>
+<li>Usage counts and subscription records: while the app is installed and your subscription history matters (billing, refunds, restores), and as tax and accounting rules require.</li>
+<li>Early access list: until launch news has gone out and testing is over, or until you ask us to delete it.</li>
+<li>Emails you send us: as long as needed to answer or fix what you reported.</li>
+</ul>
+</section>
+
+<section>
+<h2>Your choices and rights</h2>
+<ul>
+<li>Use Shootable without location: search or tap the map instead. You can turn off location permission in your phone's settings anytime.</li>
+<li>Turn notifications off in your phone's settings.</li>
+<li>Delete everything stored in the app by clearing its data or uninstalling it.</li>
+<li>Ask us what personal information we hold about you, ask us to correct it, or ask us to delete it, by emailing <a href="mailto:hello@10tenstudio.com">hello@10tenstudio.com</a>. Because we don't use accounts, we may ask for something that identifies your install or purchase (such as your Google Play order number).</li>
+<li>If you're not satisfied with our answer, you can contact the Office of the Information and Privacy Commissioner for British Columbia.</li>
+</ul>
+</section>
+
+<section>
+<h2>Children</h2>
+<p>Shootable is meant for adults and licensed firearm users. We don't knowingly collect personal information from children under 13. If you think a child has given us information, contact us and we'll delete it.</p>
+</section>
+
+<section>
+<h2>Security</h2>
+<p>Rule data is signed so the app can tell it hasn't been altered, connections use HTTPS, and we keep what we hold to the minimum above. No system is perfectly secure, so if something goes wrong that puts your information at risk, we'll tell you and the regulator as the law requires.</p>
+</section>
+
+<section>
+<h2>Changes</h2>
+<p>If we change what Shootable collects, we'll update this page and the date at the top, and tell you in the app before the change takes effect if it's significant.</p>
+</section>
+</main>
+<footer><div class="wrap">
+<span><a href="../">Shootable</a> · <a href="../faq/">FAQ</a> · <a href="../privacy/">Privacy</a> · <a href="../terms/">Terms</a> · <a href="https://10tenstudio.com" target="_blank" rel="noopener">10ten Studio</a> · hello@10tenStudio.com</span>
+<span>Shootable is made by 10ten Studio Inc. It is not a government app and is not affiliated with the Government of British Columbia. It's a guide built from public regulations, bylaws and open data, not a lawyer's opinion. The official regulations and bylaws govern.</span>
+</div></footer>
+</body>
+</html>
