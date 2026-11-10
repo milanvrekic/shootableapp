@@ -13,11 +13,11 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://getshootable.app/">
 <style>
-@font-face{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(fonts/barlow-condensed-latin-700-normal.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Sans';font-weight:400;font-display:swap;src:url(fonts/ibm-plex-sans-latin-400-normal.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Sans';font-weight:500;font-display:swap;src:url(fonts/ibm-plex-sans-latin-500-normal.woff2) format('woff2')}
-@font-face{font-family:'IBM Plex Sans';font-weight:600;font-display:swap;src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format('woff2')}
-/* The 10ten app-page system (Huntable, Fishable): bark and field neutrals, Barlow Condensed caps over IBM Plex Sans,
+@font-face{font-family:'Khand';ascent-override:100%;descent-override:20%;line-gap-override:0%;font-weight:700;font-display:swap;src:url(fonts/khand-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Public Sans';font-weight:400;font-display:swap;src:url(fonts/public-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Public Sans';font-weight:500;font-display:swap;src:url(fonts/public-sans-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Public Sans';font-weight:600;font-display:swap;src:url(fonts/public-sans-latin-600-normal.woff2) format('woff2')}
+/* The 10ten app-page system (Huntable, Fishable): bark and field neutrals, Khand caps over Public Sans,
    one brand colour per app. Shootable's crimson stays on the mark and icon; buttons use the app's sage. On this page red
    means Prohibited and navy means Not confirmed, as in the app and the rest of the family, and nothing else uses them: hazards in the diagrams are
    drawn in sand and white. */
@@ -26,10 +26,10 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);background:var(--field);font-size:18px;line-height:1.55;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Public Sans',system-ui,sans-serif;color:var(--ink);background:var(--field);font-size:18px;line-height:1.55;-webkit-text-size-adjust:100%}
 a{color:var(--ink)}a:hover{color:var(--brand-ink)}
 :focus-visible{outline:3px solid var(--brand);outline-offset:3px}
-h1,h2,h3{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.005em;margin:0;text-wrap:balance}
+h1,h2,h3{font-family:'Khand','Arial Narrow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.005em;margin:0;text-wrap:balance}
 p{margin:0;text-wrap:pretty}
 /* one content edge for every section: the wrap's side padding is never reset by a section's own padding */
 .wrap{max-width:1200px;margin:0 auto;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
@@ -42,7 +42,7 @@ p{margin:0;text-wrap:pretty}
 .btn.dark:hover{background:#264D3D;color:#fff}
 .btn.sm{min-height:44px;padding:0 16px;font-size:15px;border-radius:12px}
 .topo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-.eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+.eyebrow{font-family:'Khand',sans-serif;font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
 .light .eyebrow,.sec:not(.scene) .eyebrow{color:var(--brand-ink)}
 
 /* phone frame around a real screenshot from the app */
@@ -58,7 +58,7 @@ p{margin:0;text-wrap:pretty}
 .hero>.wrap{width:100%}
 .hero>.wrap:first-of-type{z-index:5}
 .nav{display:flex;align-items:center;gap:24px;padding:20px 0}
-.mark{display:inline-flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:30px;text-transform:uppercase;color:#fff;text-decoration:none;letter-spacing:.02em}
+.mark{display:inline-flex;align-items:center;gap:10px;font-family:'Khand',sans-serif;font-weight:700;font-size:30px;text-transform:uppercase;color:#fff;text-decoration:none;letter-spacing:.02em}
 .mark svg{width:32px;height:32px;flex:none;border-radius:8px}
 .nav .links{display:flex;gap:22px;margin-left:auto;align-items:center}
 .nav .links a:not(.btn){color:#fff;text-decoration:none;font-weight:500;font-size:16px}
@@ -79,7 +79,7 @@ p{margin:0;text-wrap:pretty}
 .hero-copy>*+*{margin-top:24px}
 .hero-copy>.pin{grid-column:2;grid-row:1/span 5;margin-top:0;align-self:center}
 .hero h1{font-size:clamp(50px,7vw,96px);line-height:.88}
-.hero .kicker{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:-8px}
+.hero .kicker{font-family:'Khand',sans-serif;font-weight:700;font-size:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:-8px}
 .hero .lede{font-size:21px;line-height:1.5;color:var(--soft);max-width:540px}
 .hero .fine{font-size:15px;color:var(--dim);max-width:520px}
 .ctas{display:flex;gap:14px;flex-wrap:wrap}
@@ -90,20 +90,20 @@ p{margin:0;text-wrap:pretty}
 .verdict.s-unsure{color:#fff}
 .verdict .badge{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-top:4px}
 .verdict.s-unsure .badge{background:rgba(255,255,255,.18)}
-.verdict .word{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;line-height:.92;text-transform:uppercase;padding-right:70px}
+.verdict .word{font-family:'Khand',sans-serif;font-weight:700;font-size:36px;line-height:.92;text-transform:uppercase;padding-right:70px}
 .verdict .why{font-size:15.5px;font-weight:500;margin-top:6px;line-height:1.38}
 .verdict .where{font-size:13.5px;margin-top:8px;opacity:.95;display:flex;gap:6px;align-items:flex-start}
 .verdict .where svg{flex:none;margin-top:2px}
 .demo-tag{position:absolute;top:12px;right:12px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,.3);color:#fff;border-radius:999px;padding:3px 9px}
 /* label in its own column, so choices that wrap line up under the first one */
 .pin .row{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:8px;align-items:start}
-.pin .row>span{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;line-height:44px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.pin .row>span{font-family:'Khand',sans-serif;font-weight:700;font-size:14px;line-height:44px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
 .pin .opts{display:flex;flex-wrap:wrap;gap:8px}
-.pin button{font:600 15px 'IBM Plex Sans',sans-serif;min-height:44px;padding:0 15px;border-radius:999px;border:1.5px solid rgba(255,255,255,.45);background:rgba(20,18,15,.55);color:#fff;cursor:pointer}
+.pin button{font:600 15px 'Public Sans',sans-serif;min-height:44px;padding:0 15px;border-radius:999px;border:1.5px solid rgba(255,255,255,.45);background:rgba(20,18,15,.55);color:#fff;cursor:pointer}
 .pin button:hover{border-color:#fff}
 .pin button[aria-pressed=true]{background:#fff;color:var(--bark);border-color:#fff}
 .pin .cap{font-size:13.5px;color:var(--dim);line-height:1.45}
-.pro-tag{display:inline-block;vertical-align:middle;font:700 12px 'IBM Plex Sans',sans-serif;letter-spacing:.08em;background:var(--brand);color:var(--bark);border-radius:6px;padding:3px 7px;margin-right:8px;position:relative;top:-1px}
+.pro-tag{display:inline-block;vertical-align:middle;font:700 12px 'Public Sans',sans-serif;letter-spacing:.08em;background:var(--brand);color:var(--bark);border-radius:6px;padding:3px 7px;margin-right:8px;position:relative;top:-1px}
 
 /* the three answers: each has its own colour AND pattern, so they read in glare and with colour blindness */
 .s-no{background-color:var(--no);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.13) 0 10px,transparent 10px 20px)}
@@ -140,10 +140,10 @@ section{scroll-margin-top:12px}
 .pair{display:flex;justify-content:center;gap:56px;align-items:flex-start}
 .pair figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:18px;flex:0 1 340px}
 .pair figcaption{display:flex;flex-direction:column;gap:6px;text-align:center;max-width:320px}
-.pair figcaption b{font-family:'Barlow Condensed',sans-serif;font-size:26px;line-height:1;text-transform:uppercase}
+.pair figcaption b{font-family:'Khand',sans-serif;font-size:26px;line-height:1;text-transform:uppercase}
 .pair figcaption span{font-size:15.5px;color:var(--soft)}
 .toggle{display:none;justify-content:center;gap:8px;margin:0 0 20px}
-.toggle button{font:600 16px 'IBM Plex Sans',sans-serif;min-height:46px;padding:0 18px;border-radius:12px;border:2px solid rgba(255,255,255,.6);background:none;color:#fff;cursor:pointer}
+.toggle button{font:600 16px 'Public Sans',sans-serif;min-height:46px;padding:0 18px;border-radius:12px;border:2px solid rgba(255,255,255,.6);background:none;color:#fff;cursor:pointer}
 .toggle button[aria-pressed=true]{background:#fff;color:var(--bark);border-color:#fff}
 .keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 40px;margin:64px 0 0;padding:0;list-style:none}
 .keys li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 14px;font-size:16px;color:var(--soft)}
@@ -157,8 +157,8 @@ section{scroll-margin-top:12px}
 /* open for hunting isn't open for target shooting: three short claims on the open page, no boxes */
 .vs3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;margin:0;padding:0;list-style:none}
 .vs3 li{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:2px solid var(--ink)}
-.vs3 i{font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-ink)}
-.vs3 b{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:30px;line-height:1;text-transform:uppercase}
+.vs3 i{font-style:normal;font-family:'Khand',sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-ink)}
+.vs3 b{font-family:'Khand',sans-serif;font-weight:700;font-size:30px;line-height:1;text-transform:uppercase}
 .vs3 span{color:var(--muted);font-size:17px}
 
 /* what every answer checks, with how far the checking has got today */
@@ -169,7 +169,7 @@ section{scroll-margin-top:12px}
 .cov b{display:block;font-size:19px}
 .cov .what{color:var(--muted);font-size:16.5px}
 .cov .today{font-size:16.5px;display:flex;gap:12px;align-items:flex-start}
-.cov .today strong{font-family:'Barlow Condensed',sans-serif;font-size:34px;line-height:.9;flex:none;width:2.6em;font-variant-numeric:tabular-nums}
+.cov .today strong{font-family:'Khand',sans-serif;font-size:34px;line-height:.9;flex:none;width:2.6em;font-variant-numeric:tabular-nums}
 .cov .today small{display:block;color:var(--muted);font-size:15px}
 .arms{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
 .arms{align-items:baseline}
@@ -223,16 +223,16 @@ section{scroll-margin-top:12px}
 .ln-ground{fill:#3A362E}
 .ln-line{fill:none;stroke:#C9B37A;stroke-width:2.5}
 .dr-you{fill:var(--brand);stroke:#14120F;stroke-width:3}
-.dr-youl{fill:#fff;font:600 15px 'IBM Plex Sans',sans-serif}
-.dr-km{fill:rgba(255,255,255,.7);font:500 13px 'IBM Plex Sans',sans-serif}
+.dr-youl{fill:#fff;font:600 15px 'Public Sans',sans-serif}
+.dr-km{fill:rgba(255,255,255,.7);font:500 13px 'Public Sans',sans-serif}
 .dr-tag rect{fill:rgba(20,18,15,.88);stroke:rgba(255,255,255,.3)}
-.dr-tag text{fill:#fff;font:600 13px 'IBM Plex Sans',sans-serif}
+.dr-tag text{fill:#fff;font:600 13px 'Public Sans',sans-serif}
 .dr-tag.hot rect{fill:#fff;stroke:none}
 .dr-tag.hot text{fill:#14120F}
 .dr-tag.dim text{fill:var(--dim);font-weight:500;font-size:12px}
 .dr-list{background:#fff;color:var(--ink);border-radius:16px;padding:14px 16px;display:grid;gap:2px}
 .dr-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline;padding-bottom:6px}
-.dr-head b{font-family:'Barlow Condensed',sans-serif;font-size:22px;text-transform:uppercase}
+.dr-head b{font-family:'Khand',sans-serif;font-size:22px;text-transform:uppercase}
 .dr-head span{font-size:14px;color:var(--muted)}
 .dr-row{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #E3E1DA;font-size:16px}
 .dr-row i{width:10px;height:10px;border-radius:50%;background:#B8B3A9}
@@ -256,7 +256,7 @@ section{scroll-margin-top:12px}
 .gains{list-style:none;margin:0;padding:0;display:grid;gap:26px}
 .gains li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px 16px;font-size:16.5px;color:var(--dim);line-height:1.5}
 .gains .ic{grid-row:span 2;width:44px;height:44px;border-radius:12px;background:rgba(143,196,166,.14);color:var(--brand);display:flex;align-items:center;justify-content:center}
-.gains b{color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;line-height:1.05;text-transform:uppercase}
+.gains b{color:#fff;font-family:'Khand',sans-serif;font-weight:700;font-size:26px;line-height:1.05;text-transform:uppercase}
 .gains a{color:var(--brand)}
 .alerts{display:grid;gap:10px;position:sticky;top:24px}
 .alert{display:grid;grid-template-columns:36px minmax(0,1fr);gap:4px 12px;background:rgba(245,246,243,.96);color:var(--ink);border-radius:18px;padding:14px 16px;box-shadow:0 14px 34px rgba(0,0,0,.35)}
@@ -269,9 +269,9 @@ section{scroll-margin-top:12px}
 .buy{margin-top:72px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
 .plan{border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.16)}
 .plan.best{border-color:var(--brand);background:rgba(143,196,166,.1)}
-.plan em{font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:15px;color:var(--brand)}
+.plan em{font-style:normal;font-family:'Khand',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:15px;color:var(--brand)}
 .plan.free-plan em{color:var(--dim)}
-.plan b{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:1}
+.plan b{display:block;font-family:'Khand',sans-serif;font-weight:700;font-size:44px;line-height:1}
 .plan b small{font-size:22px;color:var(--soft)}
 .plan span{display:block;color:var(--soft);font-size:15.5px}
 .plan ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px;color:var(--soft)}

@@ -1,7 +1,7 @@
 # getshootable.app landing page
 
-Static page in the 10ten app-page style (same system as Huntable's and Fishable's `web/`): Barlow Condensed over IBM
-Plex Sans, bark/field neutrals, one brand colour. Crimson stays on the mark; buttons are the app's sage. Red means only
+Static page in the 10ten app-page style (same system as Huntable's and Fishable's `web/`): Khand over Public
+Sans, bark/field neutrals, one brand colour. Crimson stays on the mark; buttons are the app's sage. Red means only
 Prohibited and amber only Not confirmed, as in the app; hazards in the diagrams are drawn in sand and white.
 
 - `index.html`: the whole page. `faq/index.html`: questions.
