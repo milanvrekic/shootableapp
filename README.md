@@ -17,7 +17,7 @@ Prohibited and amber only Not confirmed, as in the app; hazards in the diagrams 
 ## App screens
 
 Phone screens are screenshots of the real app (`app/`, built with `python3 app/build.py release` on the `data-bc` pack and
-the fire feed), at 390x844 and 2x, saved as `.webp` (2x) and `-1x.webp`. Map: the self-hosted topo (OpenStreetMap via
+the fire feed), at 390x844 and 2x, saved as `.webp` (2x) and `-1x.webp`, by shootable's `scripts/store/site_shots.py`. Map: the self-hosted topo (OpenStreetMap via
 Protomaps, Copernicus DEM), credited in the footer.
 
 | File | View | Firearm |
