@@ -278,6 +278,10 @@ section{scroll-margin-top:12px}
 .plan li{display:flex;gap:8px}.plan li::before{content:'✓';color:var(--brand);font-weight:700}
 .plan .btn{margin-top:auto}
 .plan>.btn{margin-top:16px}
+.plan .deal{align-self:flex-start;font-style:normal;font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;background:var(--brand);color:var(--bark);border-radius:999px;padding:4px 10px;margin-bottom:6px}
+/* Phones: a sign-up bar at the bottom once the hero's button is out of view, gone again at the closing form. Its words
+   repeat the last section button the reader passed, so the ask matches what they just read. */
+.stick{display:none}
 .pro .free{margin-top:20px;font-size:15px;color:var(--dim);max-width:780px}
 
 .priv{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:64px;align-items:start}
@@ -379,9 +383,12 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 .alert:nth-child(2){margin-left:12px}.alert:nth-child(3){margin-left:24px}
 .alerts .illus{margin-left:24px}
 .final .wrap{padding-top:96px;padding-bottom:64px}
-.nav .btn.sm{padding:0 12px;visibility:hidden}
-.scrolled .nav .btn.sm{visibility:visible}
+.nav .btn.sm{display:none}
+.stick{position:fixed;left:0;right:0;bottom:0;z-index:8;padding:12px max(16px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px));background:rgba(27,25,21,.96);border-top:1px solid rgba(255,255,255,.16);transform:translateY(110%);transition:transform .25s ease}
+.stick .btn{width:100%}
+.stick.show{display:block;transform:none}
 }
+@media (max-width:560px) and (prefers-reduced-motion:reduce){.stick{transition:none}}
 </style>
 </head>
 <body>
@@ -444,7 +451,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 <div class="state s-unsure"><h3>Not confirmed</h3><p>Something here can't be settled from the data yet: a boundary that isn't checked yet, or a bylaw that isn't verified yet. Shootable won't guess.</p><p class="eg">Says exactly what's missing, and who to ask.</p></div>
 </div>
 <p class="note">No prohibition found isn't a permit. When a source changes and hasn't been checked again, the answer drops to Not confirmed until it is.</p>
-<div class="cta-row"><a class="btn dark" href="#early-access" data-early>Get early access</a><p>Android first, then iPhone. We'll email you once when it's ready.</p></div>
+<div class="cta-row"><a class="btn dark" href="#early-access" data-early data-ask>Get the free check early</a><p>Android first, then iPhone. We'll email you once when it's ready.</p></div>
 </div>
 </section>
 
@@ -676,7 +683,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </div>
 <div class="buy">
 <div class="plan free-plan"><em>Free, always</em><b>CA$0</b><ul><li>Every answer, every rule layer</li><li>Map shading for your firearm</li><li>Sources and dates on every answer</li><li>One saved spot</li></ul></div>
-<div class="plan best"><em>Pro yearly · 14 days free</em><b>CA$29.99<small> a year</small></b><span>About CA$2.50 a month, billed yearly after the free trial.</span><a class="btn primary" href="#early-access" data-early>Get early access</a></div>
+<div class="plan best"><i class="deal">Best value · save 64%</i><em>Pro yearly · 14 days free</em><b>CA$29.99<small> a year</small></b><span>About CA$2.50 a month, billed yearly after the free trial.</span><a class="btn primary" href="#early-access" data-early data-ask>Try Pro free at launch</a></div>
 <div class="plan"><em>Pro monthly</em><b>CA$6.99<small> a month</small></b><span>For one trip or a fire season. Cancel anytime.</span></div>
 </div>
 <p class="free">We'll email you once when it's on your phone. Subscriptions are billed through Google Play or the App Store and renew until you cancel.</p>
@@ -747,6 +754,7 @@ dialog.ea::backdrop{background:rgba(20,18,15,.72)}
 </div>
 </footer>
 
+<div class="stick" id="stick" aria-hidden="true"><a class="btn primary" href="#early-access" data-early tabindex="-1">Get early access</a></div>
 <dialog class="ea" id="early-access" aria-labelledby="eaTitle"></dialog>
 
 <script>
@@ -821,9 +829,19 @@ document.querySelectorAll('.toggle button').forEach(b => b.addEventListener('cli
   document.querySelectorAll('.toggle button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
   document.querySelectorAll('.pair figure').forEach(fig => fig.classList.toggle('on', fig.dataset.fig === b.dataset.show));
 }));
-// Phones: the header's sign-up button shows once the hero's own button is out of view.
-(() => { const b = document.querySelector('.hero .ctas .btn'); if (!b || !('IntersectionObserver' in window)) return document.documentElement.classList.add('scrolled');
-  new IntersectionObserver(([e]) => document.documentElement.classList.toggle('scrolled', !e.isIntersecting)).observe(b); })();
+// Phones: the bottom sign-up bar shows once the hero's own button is out of view and hides at the closing form. Its
+// words follow the last section button ([data-ask]) scrolled past.
+(() => { const s = document.getElementById('stick'), a = s && s.querySelector('a'), b = document.querySelector('.hero .ctas .btn'), j = document.getElementById('join');
+  if (!s || !b || !j || !('IntersectionObserver' in window)) return;
+  const first = a.textContent, asks = [...document.querySelectorAll('[data-ask]')];
+  let past = false, atEnd = false, queued = false;
+  const show = () => { const on = past && !atEnd; s.classList.toggle('show', on); s.setAttribute('aria-hidden', on ? 'false' : 'true'); a.tabIndex = on ? 0 : -1; };
+  new IntersectionObserver(([e]) => { past = !e.isIntersecting && e.boundingClientRect.top < 0; show(); }).observe(b);
+  new IntersectionObserver(([e]) => { atEnd = e.isIntersecting; show(); }).observe(j);
+  const follow = () => { queued = false; let t = first;
+    for (const x of asks) if (x.getBoundingClientRect().top < innerHeight - 90) t = x.textContent;
+    if (a.textContent !== t) a.textContent = t; };
+  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(follow); } }, { passive: true }); })();
 // Close the phone menu after a jump.
 document.querySelectorAll('.menu a').forEach(a => a.addEventListener('click', () => a.closest('details').open = false));
 </script>
