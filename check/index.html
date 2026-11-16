@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A shared Shootable answer</title>
+<meta name="description" content="Someone shared a spot they checked in Shootable. This page checks the same spot again, for today.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1B1915">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'Khand';ascent-override:100%;descent-override:20%;line-gap-override:0%;font-weight:700;font-display:swap;src:url(../fonts/khand-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Public Sans';font-weight:400;font-display:swap;src:url(../fonts/public-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Public Sans';font-weight:600;font-display:swap;src:url(../fonts/public-sans-latin-600-normal.woff2) format('woff2')}
+:root{--bark:#1B1915;--field:#F5F6F3;--ink:#14120F;--muted:#4D514C;--soft:#E6E3DC;--dim:#B8B3A9;--brand:#8FCBAE;--brand-ink:#2F5D4A;--bad:#B3261E;--ok:#2F5D4A;--unk:#2F4A6E;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Public Sans',system-ui,sans-serif;color:var(--ink);background:var(--field);font-size:18px;line-height:1.55;-webkit-text-size-adjust:100%}
+a{color:var(--brand-ink)}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+h1,h2,h3{font-family:'Khand','Arial Narrow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.005em;margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+header{background:var(--bark);color:#fff}
+.nav{display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding-block:20px}
+.mark{display:inline-flex;align-items:center;gap:10px;font-family:'Khand',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase;color:#fff;text-decoration:none;letter-spacing:.02em}
+.mark svg{width:30px;height:30px;border-radius:8px}
+.nav .back{margin-left:auto;color:#fff;font-weight:600;font-size:16px;text-decoration:none}
+.title{padding-block:28px 40px}
+.title h1{font-size:clamp(40px,7vw,64px);line-height:.92}
+.title p{margin-top:12px;color:var(--soft);font-size:18px}
+main{padding-block:36px 72px;display:grid;gap:20px}
+.card{background:#fff;border-radius:18px;padding:20px 22px;display:grid;gap:10px;box-shadow:0 0 0 1px var(--soft)}
+.verdict{color:#fff;border-radius:18px;padding:22px}
+.verdict .word{font-family:'Khand','Arial Narrow',sans-serif;font-weight:700;text-transform:uppercase;font-size:clamp(38px,8vw,54px);line-height:.95}
+.verdict p{margin-top:8px;font-weight:600}
+.v-prohibited{background:repeating-linear-gradient(135deg,rgba(255,255,255,.1) 0 10px,transparent 10px 20px),var(--bad)}
+.v-clear{background:var(--ok)} .v-unconfirmed{background:var(--unk)} .v-wait{background:var(--bark)}
+.card h2{font-size:26px}
+.card ul{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.card li{border-top:1px solid var(--soft);padding-top:12px} .card li:first-child{border-top:0;padding-top:0}
+.cite{display:block;color:var(--muted);font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere;margin-top:2px}
+.note{color:var(--muted);font-size:15.5px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+select,.btn{min-height:48px;border-radius:12px;border:2px solid var(--ink);background:#fff;color:var(--ink);font:600 16px 'Public Sans',system-ui,sans-serif;padding:0 14px}
+.btn{display:inline-flex;align-items:center;text-decoration:none;cursor:pointer}
+.btn.main{background:var(--brand-ink);border-color:var(--brand-ink);color:#fff}
+footer{background:var(--bark);color:var(--dim);font-size:14px}
+footer .wrap{padding-block:32px calc(32px + env(safe-area-inset-bottom,0px));display:grid;gap:10px}
+footer a{color:#fff}
+@media (max-width:560px){.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="logo" viewBox="0 0 108 108"><rect width="108" height="108" rx="24" fill="#8E1B2E"/><path d="M10 80C18 80 26 40 40 38H68C82 40 90 80 98 80Z" fill="#fff"/><path d="M38 60 49 71 70 49" fill="none" stroke="#8E1B2E" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+<header>
+<div class="wrap">
+<nav class="nav" aria-label="Main"><a class="mark" href="../"><svg aria-hidden="true"><use href="#logo"/></svg>Shootable</a><a class="back" href="../">What is Shootable?</a></nav>
+<div class="title"><h1>A shared spot check</h1><p>Someone sent you a spot they checked in Shootable. This page checks the same spot again, for today, from the same rule data the app uses.</p></div>
+</div>
+</header>
+<main class="wrap">
+<div class="verdict v-wait" id="verdict" aria-live="polite"><div class="word" id="word">Checking…</div><p id="why">Loading the rule data. It's a few megabytes, once.</p></div>
+<div class="card" id="spot" hidden>
+  <h2>The spot</h2>
+  <p><span id="coords"></span><span class="cite" id="asof"></span></p>
+  <div class="row"><label for="firearm"><b>Firearm</b></label><select id="firearm">
+    <option value="rifle">Rifle</option><option value="shotgun-shot">Shotgun (shot)</option><option value="shotgun-slug">Shotgun (slug)</option>
+    <option value="handgun-restricted">Handgun (restricted)</option><option value="airgun-high">Air gun (over 500 fps and 5.7 J)</option>
+    <option value="airgun-low">Air gun (lower power)</option><option value="bow">Bow (longbow, recurve, compound)</option><option value="crossbow">Crossbow</option></select>
+    <a class="btn" id="geo" href="#">Open in a maps app or Shootable</a></div>
+</div>
+<div class="card" id="reasons" hidden><h2 id="reasonsH">Why</h2><ul id="list"></ul></div>
+<div class="card">
+  <p class="note"><b>What the three answers mean.</b> Prohibited: a rule Shootable checks bans shooting there, for this firearm, today. No prohibition found: none of the rules it checks bans it; rules it doesn't cover, and things no map shows, can still apply. Not confirmed: it can't be settled from the maps, or the data isn't complete or current there.</p>
+  <p class="note">A summary of public rules, not a permit or advice on the law. On private land you need the owner's permission. Confirm your target, your backstop and what's beyond it.</p>
+  <p class="note">The spot is in this page's address after the #, which your browser keeps to itself: it isn't sent to this site, and this page stores nothing.</p>
+</div>
+</main>
+<footer><div class="wrap">
+<span><a href="../">Shootable</a> · <a href="../privacy/">Privacy</a> · <a href="../terms/">Terms</a> · <a href="https://10tenstudio.com" target="_blank" rel="noopener">10ten Studio</a> · hello@10tenStudio.com</span>
+<span>Shootable is made by 10ten Studio Inc. It is not a government app and is not affiliated with the Government of British Columbia. It's a guide built from public regulations, bylaws and open data, not a lawyer's opinion. The official regulations and bylaws govern.</span>
+</div></footer>
+<script src="engine.js"></script>
+<script>
+(function () {
+  'use strict';
+  // Data layout: docs/r2-setup.md. <DATA>bc/latest.json points at the current version folder; fire orders are live.
+  var DATA = window.SHOOTABLE_DATA || 'https://data.getshootable.app/v1/';
+  var FIREARMS = { 'rifle': { kind: 'rifle' }, 'shotgun-shot': { kind: 'shotgun', projectile: 'shot' }, 'shotgun-slug': { kind: 'shotgun', projectile: 'single' },
+    'handgun-restricted': { kind: 'handgun', class: 'restricted' }, 'airgun-high': { kind: 'airgun', power: 'high' }, 'airgun-low': { kind: 'airgun', power: 'low' }, 'bow': { kind: 'bow' }, 'crossbow': { kind: 'crossbow' } };
+  var $ = function (id) { return document.getElementById(id); };
+  function parse(frag) { // "lat,lon,firearm": the same shape field.js shareFragment writes
+    var m = /^#?(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)(?:,([a-z-]{2,24}))?$/.exec(String(frag || '').trim());
+    if (!m) return null; var lat = +m[1], lon = +m[2];
+    return lat >= 41 && lat <= 70 && lon >= -141 && lon <= -100 ? { lat: lat, lon: lon, firearm: FIREARMS[m[3]] ? m[3] : 'rifle' } : null;
+  }
+  function verdict(cls, word, why) { $('verdict').className = 'verdict v-' + cls; $('word').textContent = word; $('why').textContent = why; }
+  function getJSON(url) { return fetch(url, { cache: 'no-cache', referrerPolicy: 'no-referrer' }).then(function (r) { if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); }); }
+  var D = null, spot = parse(location.hash);
+  function answer() {
+    var sel = $('firearm'), a = Shootable.evaluate(D, { lon: spot.lon, lat: spot.lat, firearm: FIREARMS[sel.value], when: new Date() });
+    var fl = sel.options[sel.selectedIndex].text.toLowerCase();
+    verdict(a.state, a.label, a.state === 'prohibited' ? 'A rule Shootable checks bans ' + fl + ' here today.' : a.state === 'clear' ? 'No rule Shootable checks prohibits ' + fl + ' here today.' : 'It can\'t be settled here for ' + fl + '.');
+    var rows = a.checks.filter(function (c) { return c.why; });
+    $('list').textContent = '';
+    rows.forEach(function (c) {
+      var li = document.createElement('li'), ci = c.cite || {}, src = [ci.instrument, ci.section, ci.data_as_of ? 'data as of ' + ci.data_as_of : ''].filter(Boolean).join(' · ');
+      var k = document.createElement('b'); k.textContent = c.status === 'prohibited' ? 'Prohibits it: ' : c.status === 'unconfirmed' ? 'Not settled: ' : 'Applies here too: ';
+      li.appendChild(k); li.appendChild(document.createTextNode(c.why));
+      if (src) { var s = document.createElement('span'); s.className = 'cite'; s.textContent = src; li.appendChild(s); }
+      $('list').appendChild(li);
+    });
+    $('reasons').hidden = !rows.length;
+    $('asof').textContent = 'Checked ' + new Date(a.at).toLocaleString('en-CA') + (a.pack && a.pack.built ? ' · rules as of ' + String(a.pack.built).slice(0, 10) : '') + (a.jurisdiction && a.jurisdiction.name ? ' · ' + a.jurisdiction.name : '');
+  }
+  if (!spot) { verdict('wait', 'No spot in this link', 'The link should end with coordinates. Ask whoever shared it to send it again from Shootable.'); return; }
+  $('firearm').value = spot.firearm;
+  $('coords').textContent = spot.lat.toFixed(5) + ', ' + spot.lon.toFixed(5);
+  $('geo').href = 'geo:' + spot.lat.toFixed(5) + ',' + spot.lon.toFixed(5) + '?q=' + spot.lat.toFixed(5) + ',' + spot.lon.toFixed(5);
+  $('spot').hidden = false;
+  getJSON(DATA + 'bc/latest.json').then(function (latest) {
+    var base = DATA + 'bc/' + latest.base + 'data/';
+    return Promise.all([getJSON(base + 'provinces.json'), getJSON(base + 'BC/pack.json'), getJSON(DATA + 'bc/live/fire.json').catch(function () { return null; })]);
+  }).then(function (r) {
+    D = Shootable.prepare({ provinces: r[0], BC: r[1], live: r[2] ? { BC: [r[2]] } : {} }); // no fire feed: the engine answers Not confirmed and says why
+    answer(); $('firearm').onchange = answer;
+  }).catch(function (e) {
+    console.warn(e);
+    verdict('wait', 'Couldn\'t check it here', 'The rule data didn\'t load. Open Shootable and search for the coordinates below, or try this page again with a better connection.');
+  });
+  window.addEventListener('hashchange', function () { location.reload(); });
+})();
+</script>
+</body>
+</html>
