@@ -16,7 +16,7 @@
 (function (root) {
   'use strict';
 
-  const ENGINE_VERSION = 'sh-0.3 (2026-11-06)';
+  const ENGINE_VERSION = 'sh-0.4 (2026-11-20)';
   const STATE = { prohibited: 'Prohibited', clear: 'No prohibition found', unconfirmed: 'Not confirmed' };
   const RING_POINTS = 8;
   const DEFAULT_MAX_AGE_DAYS = 30; // a pack older than this answers NOT CONFIRMED until it is updated
@@ -56,6 +56,11 @@
   function bboxOf(parts) {
     let a = Infinity, b = Infinity, c = -Infinity, d = -Infinity;
     for (const r of parts) for (const [x, y] of r) { if (x < a) a = x; if (y < b) b = y; if (x > c) c = x; if (y > d) d = y; }
+    return [a, b, c, d];
+  }
+  function bboxOfFlat(flats) { // the same box as bboxOf(flats.map(decodeRing)), without building the points
+    let a = Infinity, b = Infinity, c = -Infinity, d = -Infinity;
+    for (const r of flats) { let x = 0, y = 0; for (let i = 0; i < r.length; i += 2) { x += r[i]; y += r[i + 1]; if (x < a) a = x; if (y < b) b = y; if (x > c) c = x; if (y > d) d = y; } }
     return [a, b, c, d];
   }
   function inRings(rings, x, y) { // even-odd over all rings (holes included)
@@ -181,9 +186,16 @@
       for (let i = 0; i < L.xyz.length; i += 3) { const k = Math.floor(L.xyz[i] / C) + ',' + Math.floor(L.xyz[i + 1] / C); if (!grid.has(k)) grid.set(k, []); grid.get(k).push(L.xyz[i], L.xyz[i + 1], L.xyz[i + 2]); }
       return Object.assign({}, L, { features: [], grid, cell: C });
     }
+    // A feature's outlines are decoded the first time something reads `parts` (a tap near it, the shading, the
+    // downrange fan), not at load: most features are never touched in a session. The bbox comes straight from the
+    // delta arrays, so the index and every bbox test work without decoding. Same points, same answers.
     const features = L.features ? L.features.map(f => {
-      const parts = (f.rings || f.paths || []).map(decodeRing);
-      return Object.assign({}, f, { parts, closed: !!f.rings, bb: bboxOf(parts) });
+      const flat = f.rings || f.paths || [];
+      const o = Object.assign({}, f, { closed: !!f.rings, bb: bboxOfFlat(flat) });
+      if (o.rings) o.rings = undefined; if (o.paths) o.paths = undefined; // the deltas stay only in `flat`, until decoded
+      let parts = null;
+      Object.defineProperty(o, 'parts', { enumerable: true, get() { return parts || (parts = flat.map(decodeRing)); } });
+      return o;
     }) : null; // null = layer exists but isn't loaded on this phone (e.g. a region not saved offline)
     const stale = L.stale_extent ? L.stale_extent.map(decodeRing) : null;
     return Object.assign({}, L, { features, staleRings: stale });
@@ -369,9 +381,59 @@
     if (J && J.features) {
       const j = containing(J.features, x, y);
       if (j && j.coverage !== 'verified') checks.push({ status: 'unconfirmed', key: 'bylaw_coverage', feature: j.name, cite: { layer: 'jurisdictions', data_as_of: J.data_as_of },
-        why: j.coverage === 'map_pending' ? `${j.name}'s bylaw sets where shooting is allowed on a map that isn't in Shootable yet` : `Local bylaws for ${j.name} aren't verified yet` });
+        why: j.coverage === 'map_pending' ? `${j.name}'s bylaw sets where shooting is allowed on a map that isn't in Shootable yet`
+          : j.coverage === 'stale' ? `${j.name}'s bylaw changed since it was checked and is being re-verified` : `Local bylaws for ${j.name} aren't verified yet` });
     }
     return checks;
+  }
+
+  // ---------- mapped buildings near the spot (downrange region tiles, when loaded) ----------
+  // A condition rule with conditions.building_check_m (BC Sch 3 item 19: 100 m from dwellings and occupied buildings)
+  // is checked against the mapped buildings: one within that distance (plus the GPS accuracy) makes the answer
+  // NOT CONFIRMED, because only the person can tell a dwelling from a shed. None within it keeps the condition (maps
+  // miss buildings, so an empty map never clears anything). Without tiles covering the circle nothing changes.
+  // Answer-only: map shading and whereToGo (stateAt) don't look at buildings.
+  const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
+  function nearestBuilding(pk, lon, lat, x, y, R) {
+    const tiles = [...pk.regions.values()];
+    if (!tiles.length) return { covered: false };
+    const ring = [[x, y]]; for (let k = 0; k < 8; k++) ring.push([x + R * Math.cos(k * Math.PI / 4), y + R * Math.sin(k * Math.PI / 4)]);
+    const layers = [...pk.layers.values()].filter(L => L.downrange === 'building' && L.features);
+    if (!layers.length || !ring.every(([px, py]) => tiles.some(t => inBox(t.bbox, px, py, 0)))) return { covered: false };
+    let best = null;
+    for (const L of layers) {
+      const feats = L.features, list = candidates(feats, x - R, y - R, x + R, y + R);
+      for (let k = 0, n = list ? list.length : feats.length; k < n; k++) {
+        const f = feats[list ? list[k] : k];
+        if (!inBox(f.bb, x, y, R)) continue;
+        const d = f.closed && inRings(f.parts, x, y) ? 0 : distToParts(f.parts, x, y, f.closed);
+        if (d <= R && (!best || d < best.d)) best = { d, f, L };
+      }
+    }
+    if (!best) return { covered: true, nearest: null, layer: layers[0] };
+    // true bearing to the building's centre: grid north differs from true north by a few degrees in BC Albers / AB 10-TM
+    const [nx, ny] = pk.proj(lon, lat + 0.001), north = Math.atan2(nx - x, ny - y);
+    const bb = best.f.bb, g = Math.atan2((bb[0] + bb[2]) / 2 - x, (bb[1] + bb[3]) / 2 - y);
+    const deg = ((g - north) / D2R + 360) % 360;
+    return { covered: true, nearest: { d: Math.round(best.d), bearing_deg: Math.round(deg), dir: DIRS[Math.round(deg / 45) % 8], id: best.f.id }, layer: best.L };
+  }
+  function buildingCheck(pk, lon, lat, x, y, rules, checks, acc) {
+    let out = null;
+    for (const rule of rules) {
+      const m = rule.conditions && rule.conditions.building_check_m; if (!m) continue;
+      const c = checks.find(k => k.cite && k.cite.rule === rule.id && k.status === 'condition'); if (!c) continue;
+      const nb = nearestBuilding(pk, lon, lat, x, y, m + acc);
+      out = { distance_m: m, covered: nb.covered, nearest: nb.nearest || null };
+      if (!nb.covered) continue;
+      const L = nb.layer;
+      if (nb.nearest) {
+        const n = nb.nearest, where = n.d === 0 ? "You're inside a mapped building's outline" : `A mapped building is about ${n.d} m ${n.dir} of this spot`;
+        Object.assign(c, { status: 'unconfirmed', key: 'building_near', d: n.d,
+          why: `${where}${n.d > m ? ` (within ${m} m allowing for your GPS accuracy)` : ''}. ${rule.summary} Only you can confirm what the building is.`,
+          cite: Object.assign({}, c.cite, { layer: L.id, data_as_of: L.data_as_of }) });
+      } else c.why = `${rule.summary} No building is mapped within ${m} m, but maps miss some.`;
+    }
+    return out;
   }
 
   const rank = { prohibited: 2, unconfirmed: 1, clear: 0 };
@@ -393,6 +455,7 @@
     const [x, y] = pk.proj(q.lon, q.lat);
     const rules = applicable(pk, tags, when, activity);
     const checks = checkPoint(pk, x, y, rules);
+    const buildings = buildingCheck(pk, q.lon, q.lat, x, y, rules, checks, Math.max(0, q.accuracy_m || 0));
     const ageDays = ageOf(when, pk.built, 864e5);
     if (!(ageDays <= pk.maxAgeDays)) checks.push({ status: 'unconfirmed', key: 'data_age', why: Number.isFinite(ageDays) ? `Rule data is ${Math.floor(ageDays)} days old. Update it with signal before relying on it.` : 'The rule data has no readable build date. Update it with signal before relying on it.', cite: { data_as_of: String(pk.built || '').slice(0, 10) || null } });
     // Live feeds (fire orders): a required feed that's missing or too old can't be assumed clear.
@@ -418,7 +481,7 @@
     // the municipality or electoral area the spot is in (name and kind only), for the page's prompts; null when unknown
     const JL = pk.layers.get('jurisdictions'), jf = JL && JL.features ? containing(JL.features, x, y) : null;
     const jurisdiction = jf ? { name: jf.name || null, kind: jf.kind || null } : null;
-    return finish(Object.assign(base, { checks, x, y, rulesChecked, layers, jurisdiction, pack: { version: pk.version, built: pk.built }, live: pk.feeds }));
+    return finish(Object.assign(base, { checks, x, y, rulesChecked, layers, jurisdiction, buildings, pack: { version: pk.version, built: pk.built }, live: pk.feeds }));
   }
 
   function finish(ans) {
