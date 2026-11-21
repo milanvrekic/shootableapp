@@ -393,6 +393,17 @@
   // NOT CONFIRMED, because only the person can tell a dwelling from a shed. None within it keeps the condition (maps
   // miss buildings, so an empty map never clears anything). Without tiles covering the circle nothing changes.
   // Answer-only: map shading and whereToGo (stateAt) don't look at buildings.
+  // lon/lat of a projected point near (lon0, lat0): Newton steps on the forward projection (sub-centimetre within a few km)
+  function unproject(pk, lon0, lat0, X, Y) {
+    let lon = lon0, lat = lat0;
+    for (let i = 0; i < 6; i++) {
+      const [x, y] = pk.proj(lon, lat), e = 1e-5, [x1, y1] = pk.proj(lon + e, lat), [x2, y2] = pk.proj(lon, lat + e);
+      const a = (x1 - x) / e, b = (x2 - x) / e, c = (y1 - y) / e, d = (y2 - y) / e, det = a * d - b * c, ex = X - x, ey = Y - y;
+      lon += (d * ex - b * ey) / det; lat += (-c * ex + a * ey) / det;
+      if (Math.abs(ex) + Math.abs(ey) < 0.01) break;
+    }
+    return [+lon.toFixed(7), +lat.toFixed(7)];
+  }
   const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
   function nearestBuilding(pk, lon, lat, x, y, R) {
     const tiles = [...pk.regions.values()];
@@ -415,7 +426,9 @@
     const [nx, ny] = pk.proj(lon, lat + 0.001), north = Math.atan2(nx - x, ny - y);
     const bb = best.f.bb, g = Math.atan2((bb[0] + bb[2]) / 2 - x, (bb[1] + bb[3]) / 2 - y);
     const deg = ((g - north) / D2R + 360) % 360;
-    return { covered: true, nearest: { d: Math.round(best.d), bearing_deg: Math.round(deg), dir: DIRS[Math.round(deg / 45) % 8], id: best.f.id }, layer: best.L };
+    // its outline in lon/lat for the page to draw (first part, at most 200 points)
+    const outline = (best.f.parts[0] || []).slice(0, 200).map(([px, py]) => unproject(pk, lon, lat, px, py));
+    return { covered: true, nearest: { d: Math.round(best.d), bearing_deg: Math.round(deg), dir: DIRS[Math.round(deg / 45) % 8], id: best.f.id, ring: outline }, layer: best.L };
   }
   function buildingCheck(pk, lon, lat, x, y, rules, checks, acc) {
     let out = null;
@@ -423,7 +436,7 @@
       const m = rule.conditions && rule.conditions.building_check_m; if (!m) continue;
       const c = checks.find(k => k.cite && k.cite.rule === rule.id && k.status === 'condition'); if (!c) continue;
       const nb = nearestBuilding(pk, lon, lat, x, y, m + acc);
-      out = { distance_m: m, covered: nb.covered, nearest: nb.nearest || null };
+      out = { rule: rule.id, distance_m: m, covered: nb.covered, nearest: nb.nearest || null };
       if (!nb.covered) continue;
       const L = nb.layer;
       if (nb.nearest) {
