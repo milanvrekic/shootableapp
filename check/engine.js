@@ -489,6 +489,9 @@
         if (near) { checks.push({ status: 'unconfirmed', key: 'edge', why: `Within ${Math.round(r)} m (your GPS accuracy) of: ${near.why}`, cite: near.cite }); break; }
       }
     }
+    // GPS accuracy disclaimer on a clear answer (Milan, 2026-11-23): the ring only looks for Prohibited areas, so an area
+    // that answers Not confirmed can still begin within the fix. Said, not applied: the state doesn't change.
+    if (r > 0 && stateOf(checks) === 'clear') checks.push({ status: 'condition', key: 'gps_accuracy', why: `Your GPS position is accurate to about ${Math.round(r)} m. Within that distance this answer looks for prohibitions, not for areas still being checked. If a boundary on the map is close, move well clear of it or wait for a better fix under open sky.` });
     const rulesChecked = rules.map(rl => rl.id);
     const layers = [...pk.layers.values()].map(L => ({ id: L.id, title: L.title, data_as_of: L.data_as_of, status: L.features ? (L.status || 'verified') : 'not_loaded' }));
     // the municipality or electoral area the spot is in (name and kind only), for the page's prompts; null when unknown
